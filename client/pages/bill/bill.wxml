@@ -1,0 +1,5 @@
+<!-- index.wxml -->
+<view class="container">
+  middle
+  <tabbar tabbar="{{tabbar}}"></tabbar>
+</view>
