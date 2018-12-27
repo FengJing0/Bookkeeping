@@ -1,14 +1,14 @@
 App({
   onLaunch: function () {
-    wx.cloud.init({
-      env: 'cloudminiapp-579a16', // 前往云控制台获取环境id
-      traceUser: true //是否要捕捉每个用户的访问记录。设置为true，用户可在管理端看到用户访问记录
-    })
-
     //隐藏系统tabbar
     wx.hideTabBar();
     //获取设备信息
     this.getSystemInfo();
+
+    wx.cloud.init({
+      env: 'cloudminiapp-579a16', // 前往云控制台获取环境id
+      traceUser: true //是否要捕捉每个用户的访问记录。设置为true，用户可在管理端看到用户访问记录
+    })
 
 
   },
@@ -28,21 +28,16 @@ App({
     let _this = currentPages[currentPages.length - 1];
     let pagePath = _this.route;
 
-    (pagePath.indexOf('/') != 0) && (pagePath = '/' + pagePath);
-
-
-
-    // if(pagePath.indexOf('/') != 0){
-    //   pagePath = '/' + pagePath;
-    // } 
+    if (pagePath.indexOf('/') != 0) {
+      pagePath = '/' + pagePath;
+    }
 
     for (let i in tabbar.list) {
       tabbar.list[i].selected = false;
       (tabbar.list[i].pagePath == pagePath) && (tabbar.list[i].selected = true);
     }
-    console.log(tabbar);
     _this.setData({
-      tabbar: tabbar
+      tabbar
     });
   },
 
