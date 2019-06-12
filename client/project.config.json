@@ -1,5 +1,0 @@
-{
-  "miniprogramRoot": "./client",
-  "appid": "wxe9235fc888295cd2",
-  "cloudfunctionRoot": "./cloud-functions/"
-}
