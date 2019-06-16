@@ -3,9 +3,13 @@ import { View, Text } from '@tarojs/components'
 import './header.scss'
 
 export default class Header extends Component {
+  static defaultProps = {
+    title: '记账App',
+    height:160
+  }
+
   state = {
-    paddingTop: 26,
-    height: 160
+    paddingTop: 26
   }
   componentDidMount () {
     const that = this
@@ -16,18 +20,17 @@ export default class Header extends Component {
         // console.log(scale * res.statusBarHeight*2+24)
         console.log(res)
         that.setState({
-          paddingTop: res.statusBarHeight + 12,
-          height: res.statusBarHeight + 56
+          paddingTop: res.statusBarHeight + 12
         })
       }
     })
   }
 
   render () {
-    const { title } = this.props
-    const { paddingTop, height } = this.state
-    return <View className='header' style={{ paddingTop: paddingTop + 'Px', height: height + 'Px' }}>
-      <Text className='title'>{ title }</Text>
+    const { title, height } = this.props
+    const { paddingTop } = this.state
+    return <View className='header' style={{ paddingTop: paddingTop + 'px', height: height + 'px' }}>
+      <Text className='title'>{ title === '资产' ? '记账App' : title }</Text>
     </View>
   }
 }
