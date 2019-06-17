@@ -18,7 +18,7 @@ export default class Header extends Component {
         // 状态栏高度和屏幕宽度
         // console.log(res.statusBarHeight, res.windowWidth)
         // console.log(scale * res.statusBarHeight*2+24)
-        console.log(res)
+        // console.log(res)
         that.setState({
           paddingTop: res.statusBarHeight + 12
         })

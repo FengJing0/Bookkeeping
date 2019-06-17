@@ -1,9 +1,24 @@
 import Taro, { Component } from '@tarojs/taro'
+import { connect } from '@tarojs/redux'
 import { View, Text, Button } from '@tarojs/components'
+
+import { get } from '../../actions/systemInfo'
 
 import Header from '../header/header'
 import Tabber from '../tabbar/tabbar'
 
+const mapStateToProps = state => ({
+  statusBarHeight: state.systemInfo.statusBarHeight
+})
+
+const mapDispatchToProps = dispatch => ({
+  get (data) {
+    dispatch(get(data))
+  }
+})
+
+//  connect(() => ({ }), mapDispatchToProps)(Home)
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Home extends Component {
   state = {
     height: 160,
@@ -16,9 +31,11 @@ export default class Home extends Component {
   }
 
   componentDidMount () {
+    console.log(this.props)
     const that = this
     Taro.getSystemInfo({
       success: (res) => {
+        that.props.get( res.statusBarHeight )
         // 状态栏高度和屏幕宽度
         // console.log(res.statusBarHeight, res.windowWidth)
         // console.log(scale * res.statusBarHeight*2+24)
@@ -31,6 +48,7 @@ export default class Home extends Component {
   }
 
   navigator = item => {
+    console.log(this.props)
     const title = item.text
     let height
     switch (title) {
@@ -70,3 +88,4 @@ export default class Home extends Component {
     </View>)
   }
 }
+
