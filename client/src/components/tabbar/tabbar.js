@@ -8,29 +8,29 @@ export default class Tabber extends Component {
     list: [
       {
         text: "资产",
-        iconPath: require("../../imgs/icon/asset.png"),
-        selectedIconPath: require("../../imgs/icon/asset@selected.png")
+        iconPath: require("../../asstes/imgs/icon/asset.png"),
+        selectedIconPath: require("../../asstes/imgs/icon/asset@selected.png")
       },
       {
         text: "报表",
-        iconPath: require("../../imgs/icon/report.png"),
-        selectedIconPath: require("../../imgs/icon/report@selected.png")
+        iconPath: require("../../asstes/imgs/icon/report.png"),
+        selectedIconPath: require("../../asstes/imgs/icon/report@selected.png")
       },
       {
-        iconPath: require("../../imgs/icon/bookkeeping.png"),
-        selectedIconPath: require("../../imgs/icon/bookkeeping.png"),
+        iconPath: require("../../asstes/imgs/icon/bookkeeping.png"),
+        selectedIconPath: require("../../asstes/imgs/icon/bookkeeping.png"),
         isSpecial: true,
         text: "记账"
       },
       {
         text: "账单",
-        iconPath: require("../../imgs/icon/bill.png"),
-        selectedIconPath: require("../../imgs/icon/bill@selected.png")
+        iconPath: require("../../asstes/imgs/icon/bill.png"),
+        selectedIconPath: require("../../asstes/imgs/icon/bill@selected.png")
       },
       {
         text: "我的",
-        iconPath: require("../../imgs/icon/my.png"),
-        selectedIconPath: require("../../imgs/icon/my@selected.png")
+        iconPath: require("../../asstes/imgs/icon/my.png"),
+        selectedIconPath: require("../../asstes/imgs/icon/my@selected.png")
       }
     ]
   }

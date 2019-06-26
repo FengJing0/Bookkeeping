@@ -40,7 +40,7 @@ export default class IndexPage extends Component {
           </View>
           <View className='detailItem'>
             <View>
-              <Image src='../../imgs/icon/bookkeeping.png' className='img'></Image>
+              <Image src='../../asstes/imgs/icon/bookkeeping.png' className='img'></Image>
               <Text>购物</Text>
             </View>
             <View>

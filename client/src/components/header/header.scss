@@ -1,5 +1,7 @@
+@import '../../asstes/css/common.scss';
+
 .header{
-  background: linear-gradient(180deg,rgba(252,138,90,1),rgba(253,106,99,1));
+  background: $color-inline-gradient;
   // padding-top:60px;
   width:750px;
   // height:160px;
@@ -11,4 +13,9 @@
   z-index: 10;
   box-sizing: border-box;
   font-size: 36px;
+  // position: relative;
+  .goback{
+    position: absolute;
+    left:35px;
+  }
 }

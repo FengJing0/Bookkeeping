@@ -1,7 +1,10 @@
+@import '../../asstes/css/common.scss';
+
 .report{
   position: relative;
   z-index: 100;
   top:-59px;
+
   .overview{
     width:700px;
     height: 114px;
@@ -10,21 +13,75 @@
     margin:0 auto; 
     display: flex;
     box-shadow:0px 1px 6px 0px rgba(133,132,132,0.26);
-    justify-content: space-around;
+    // justify-content: center;
     align-items: center;
-    .item{
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      font-size: 36px;
-      color:#333;
-      .title{
-        color:#666;
-        font-size: 24px;
-      }
-      .label{
-        font-size: 20px;
+    .SegmentedControl{
+      flex:1;
+    }
+  }
+
+
+  .label{
+    display: flex;
+    // padding:0 10px; 
+    border-bottom: 1px solid #E6E6E6;
+    justify-content: space-between;
+    .date{
+      padding:10px 32px;
+      border-bottom: 2px solid #000;
+    }
+    .picker{
+      $color:#FC8A5A;
+      font-size: 30px;
+      padding:10px 32px;
+      color:$color-primary;
+      .icon{
+        display: inline-block;
+        width:0;
+        height:0;
+        border-left:15px solid transparent;
+        border-right:15px solid transparent;
+        border-top:20px solid $color-primary;
       }
     }
+  }
+
+
+  .chart{
+    padding:10px 30px;
+  }
+
+
+  .detail{
+    .title{
+      padding:15px 30px;
+    }
+    .item{
+      padding:12px 30px;
+      border-bottom:1px solid #D1D1D1;
+      display: flex;
+      flex-direction: row;
+      .icon{
+        width:64px;
+        height: 64px;
+        border-radius: 50%;
+        background-color: $color-primary;
+        text-align: center;
+        line-height: 64px;
+        color:#fff;
+      }
+      .warpper{
+        flex:1;
+        margin-left:12px;
+        .bar{
+          margin-top:10px;
+          height: 16px;
+          width: 100%;
+          border-radius: 8px;
+          background: $color-inline-gradient;
+        }
+      }
+    }
+    
   }
 }

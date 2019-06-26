@@ -1,35 +1,34 @@
 import Taro, { Component } from '@tarojs/taro'
+import { connect } from '@tarojs/redux'
 import { View, Text } from '@tarojs/components'
 import './header.scss'
 
+
+const mapStateToProps = state => ({
+  statusBarHeight: state.systemInfo.statusBarHeight
+})
+
+const mapDispatchToProps = dispatch => ({})
+
+//  connect(() => ({ }), mapDispatchToProps)(Home)
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Header extends Component {
   static defaultProps = {
-    title: '记账App',
-    height:160
+    title: '理财记',
+    height: 112,
+    goBack: false
   }
 
-  state = {
-    paddingTop: 26
-  }
-  componentDidMount () {
-    const that = this
-    Taro.getSystemInfo({
-      success: (res) => {
-        // 状态栏高度和屏幕宽度
-        // console.log(res.statusBarHeight, res.windowWidth)
-        // console.log(scale * res.statusBarHeight*2+24)
-        // console.log(res)
-        that.setState({
-          paddingTop: res.statusBarHeight + 12
-        })
-      }
-    })
+  goBack = () => {
+    Taro.navigateBack({ delta: 1 })
   }
 
   render () {
-    const { title, height } = this.props
-    const { paddingTop } = this.state
-    return <View className='header' style={{ paddingTop: paddingTop + 'px', height: height + 'px' }}>
+    let { title, height, statusBarHeight, goBack } = this.props
+    return <View className='header' style={{ paddingTop: statusBarHeight + 12 + 'px', height: height + 'px' }}>
+      {
+        goBack && <Text className='goback' style={{ top: statusBarHeight + 12 + 'px' }} onClick={this.goBack}>返回</Text>
+      }
       <Text className='title'>{ title === '资产' ? '记账App' : title }</Text>
     </View>
   }

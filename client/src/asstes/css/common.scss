@@ -1,0 +1,12 @@
+$color-primary:#FC7F5D;
+// $color:#FC8A5A;
+$color-inline-gradient:linear-gradient(180deg,rgba(252,138,90,1),rgba(253,106,99,1));
+
+
+.fl{
+  float: left;
+}
+.fr{
+  float: right;
+}
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}

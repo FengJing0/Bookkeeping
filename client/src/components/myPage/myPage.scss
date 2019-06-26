@@ -1,6 +1,8 @@
+@import '../../asstes/css/common.scss';
+
 .my{
   .top{
-    background: linear-gradient(180deg,rgba(252,138,90,1),rgba(253,106,99,1));
+    background: $color-inline-gradient;
     display: flex;
     flex-direction: column;
     justify-content: center;

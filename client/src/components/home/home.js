@@ -17,7 +17,6 @@ const mapDispatchToProps = dispatch => ({
   }
 })
 
-//  connect(() => ({ }), mapDispatchToProps)(Home)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Home extends Component {
   state = {
@@ -31,14 +30,10 @@ export default class Home extends Component {
   }
 
   componentDidMount () {
-    console.log(this.props)
     const that = this
     Taro.getSystemInfo({
       success: (res) => {
-        that.props.get( res.statusBarHeight )
-        // 状态栏高度和屏幕宽度
-        // console.log(res.statusBarHeight, res.windowWidth)
-        // console.log(scale * res.statusBarHeight*2+24)
+        that.props.get(res.statusBarHeight)
         that.setState({
           statusBarHeight: res.statusBarHeight + 56,
           height: res.statusBarHeight + 56 + 36
@@ -48,10 +43,12 @@ export default class Home extends Component {
   }
 
   navigator = item => {
-    console.log(this.props)
     const title = item.text
+    this.props.onNavigator(title)
     let height
     switch (title) {
+      case '记账':
+        return
       case '资产':
         height = this.state.statusBarHeight + 36
         break;
@@ -69,11 +66,7 @@ export default class Home extends Component {
       title,
       height
     })
-    this.props.onNavigator(title)
-  }
 
-  get = () => {
-    return <Button>click</Button>
   }
 
   render () {

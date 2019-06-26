@@ -5,7 +5,7 @@ cloud.init()
 
 exports.main = async () => {
   const wxContext = cloud.getWXContext()
-
+  return wxContext
   return {
     openid: wxContext.OPENID,
     appid: wxContext.APPID,

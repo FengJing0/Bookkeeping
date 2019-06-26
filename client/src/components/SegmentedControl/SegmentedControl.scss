@@ -1,0 +1,25 @@
+@import '../../asstes/css/common.scss';
+
+.SegmentedControl{
+  width:90%;
+  margin:0 auto;
+  display: flex;
+  font-size: 32px;
+  border:2px solid $color-primary;
+  border-radius: 12px;
+  overflow: hidden;
+  // line-height: 40px;
+  text-align: center;
+  .SegmentedControl_item{
+    padding:12px 0;
+    flex:1;
+    border-right:2px solid $color-primary;
+    &:last-child{
+      border-right:none;
+    }
+    &.active{
+      color:#fff;
+      background: $color-inline-gradient;
+    }
+  }
+}

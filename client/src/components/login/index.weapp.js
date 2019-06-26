@@ -23,6 +23,7 @@ export default class Login extends Component {
         data: {}
       })
       .then(res => {
+        console.log(res)
         this.setState({
           context: res.result
         })

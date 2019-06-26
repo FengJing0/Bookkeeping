@@ -1,0 +1,52 @@
+@import '../../asstes/css/common.scss';
+
+.bookkeeping{
+  
+  .overview{
+    position: relative;
+    z-index: 100;
+    top:-59px;
+    width:700px;
+    height: 114px;
+    background: #fff;
+    border-radius: 8px;
+    margin:0 auto; 
+    display: flex;
+    box-shadow:0px 1px 6px 0px rgba(133,132,132,0.26);
+    // justify-content: center;
+    align-items: center;
+    .SegmentedControl{
+      flex:1;
+    }
+  }
+
+  .item-warrper{
+    // display: flex;
+    // flex-direction: row;
+    // flex-wrap: wrap;
+    // justify-content: space-around;
+    .item{
+      width:100px;
+      margin:25px 40px;
+      text-align: center;
+      &.active{
+        .icon{
+          background:$color-inline-gradient;
+          color:#fff;
+        }
+      }
+      .icon{
+        border-radius: 50%;
+        height: 100px;
+        width: 100px;
+        line-height: 100px;
+        background:#E5E5E5;
+        color:#666666;
+      }
+      .label{
+        margin-top:20px;
+        font-size: 32px;
+      }
+    }
+  }
+}
