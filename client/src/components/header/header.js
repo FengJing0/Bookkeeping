@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { connect } from '@tarojs/redux'
 import { View, Text } from '@tarojs/components'
+import IconComponent from '../icon/icon'
 import './header.scss'
 
 
@@ -27,9 +28,11 @@ export default class Header extends Component {
     let { title, height, statusBarHeight, goBack } = this.props
     return <View className='header' style={{ paddingTop: statusBarHeight + 12 + 'px', height: height + 'px' }}>
       {
-        goBack && <Text className='goback' style={{ top: statusBarHeight + 12 + 'px' }} onClick={this.goBack}>返回</Text>
+        goBack && <View className='goback' style={{ top: statusBarHeight + 12 + 'px' }} onClick={this.goBack}>
+          <IconComponent name='fanhui1'></IconComponent>
+        </View>
       }
-      <Text className='title'>{ title === '资产' ? '记账App' : title }</Text>
+      <Text className='title'>{ title === '资产' ? '理财记' : title }</Text>
     </View>
   }
 }

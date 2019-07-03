@@ -1,20 +1,10 @@
 @import '../../asstes/css/common.scss';
 
 .report{
-  position: relative;
-  z-index: 100;
-  top:-59px;
-
+position: relative;
   .overview{
-    width:700px;
-    height: 114px;
-    background: #fff;
-    border-radius: 8px;
-    margin:0 auto; 
-    display: flex;
-    box-shadow:0px 1px 6px 0px rgba(133,132,132,0.26);
-    // justify-content: center;
-    align-items: center;
+   @extend %overview;
+   position: absolute;
     .SegmentedControl{
       flex:1;
     }
@@ -22,6 +12,7 @@
 
 
   .label{
+    padding-top:57px;
     display: flex;
     // padding:0 10px; 
     border-bottom: 1px solid #E6E6E6;

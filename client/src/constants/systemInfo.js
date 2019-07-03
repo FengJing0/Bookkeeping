@@ -1,1 +1,1 @@
-export const GET = 'GET'
+export const GET = 'GET_SYSTEMINFO'

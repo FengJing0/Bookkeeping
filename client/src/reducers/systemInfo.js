@@ -7,7 +7,6 @@ const INITIAL_STATE = {
 export default function systemInfo (state = INITIAL_STATE, action) {
   switch (action.type) {
     case GET:
-      console.log(action)
       return {
         statusBarHeight: action.data
       }

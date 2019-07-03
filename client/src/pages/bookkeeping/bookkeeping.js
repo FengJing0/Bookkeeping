@@ -5,12 +5,13 @@ import { View, Text, Button } from "@tarojs/components"
 import SegmentedControl from '../../components/SegmentedControl/SegmentedControl'
 import HeaderComponent from '../../components/header/header'
 import IconComponent from '../../components/icon/icon'
-import Login from '../../components/login'
+import Calculator from '../../components/calculator/calculator'
 
 import './bookkeeping.scss'
 
 const mapStateToProps = state => ({
-  statusBarHeight: state.systemInfo.statusBarHeight
+  statusBarHeight: state.systemInfo.statusBarHeight,
+  category: state.category
 })
 
 const mapDispatchToProps = dispatch => ({})
@@ -22,76 +23,51 @@ export default class Bookkeeping extends Component {
   state = {
     values: ['支出', '收入'],
     current: 0,
-    list: [
-      {
-        icon: 'gouwu',
-        label: '购物'
-      },
-      {
-        icon: 'gouwu',
-        label: '购物'
-      },
-      {
-        icon: 'gouwu',
-        label: '购物'
-      },
-      {
-        icon: 'gouwu',
-        label: '购物'
-      },
-      {
-        icon: 'gouwu',
-        label: '购物'
-      },
-      {
-        icon: 'gouwu',
-        label: '购物'
-      },
-      {
-        icon: 'gouwu',
-        label: '购物'
-      },
-      {
-        icon: 'gouwu',
-        label: '购物'
-      },
-      {
-        icon: 'gouwu',
-        label: '购物'
-      },
-      {
-        icon: 'gouwu',
-        label: '烟酒'
-      }
-    ],
-    selectedItem: ''
+    list: [],
+    selectedItem: '',
+    showCalculator:false
   }
 
   handleClick = val => {
+    let list = this.filterCategoryList(val)
     this.setState({
-      current: val
+      current: val,
+      list
     })
   }
 
   onSelect = item => {
     this.setState({
-      selectedItem:item.label
+      selectedItem: item._id,
+      showCalculator:true
     })
     console.log(item)
   }
 
-  componentWillMount () { }
+  filterCategoryList = (type) => {
+    return this.props.category.filter(item => item.type === this.state.values[type])
+  }
 
-  componentDidMount () { }
+  init = () => {
+    let list = this.filterCategoryList(0)
+    this.setState({
+      current: 0,
+      list,
+      selectedItem: ''
+    })
+  }
 
-  componentWillUnmount () { }
+  componentDidMount () {
+    this.init()
+  }
 
-  componentDidShow () { }
+  componentDidHide () {
+    this.init()
+  }
 
-  componentDidHide () { }
 
   render () {
-    const { values, current, list, selectedItem } = this.state
+    const { values, current, list, selectedItem, showCalculator} = this.state
     const { statusBarHeight } = this.props
 
     const height = statusBarHeight + 56 + 36
@@ -107,19 +83,19 @@ export default class Bookkeeping extends Component {
             ></SegmentedControl>
           </View>
         </View>
-        <View className='item-warrper clearfix'>
+        <View className='item-warrper clearfix' style={{ paddingTop: height + 30 + 'px' }}>
           {
-            list.map((item, index) => (
-              <View className={ item.label === selectedItem ? 'item fl active' : 'item fl'} key={item.label} onClick={() => this.onSelect(item)}>
+            list.map(item => (
+              <View className={item._id === selectedItem ? 'item fl active' : 'item fl'} key={item._id} onClick={() => this.onSelect(item)}>
                 <View className='icon'>
                   <IconComponent name={item.icon} fontSize={64}></IconComponent>
                 </View>
-                <View className='label'>{ item.label }</View>
+                <View className='label'>{ item.name }</View>
               </View>
             ))
           }
         </View>
-        <Login></Login>
+        <Calculator show={ showCalculator}></Calculator>
       </View>
     )
   }

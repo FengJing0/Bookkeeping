@@ -1,0 +1,34 @@
+$border:1px solid #D9D9D9;
+
+.border_bottom{
+  border-left:$border;
+}
+.border_top{
+  border-left:$border;
+}
+.border_left{
+  border-left:$border;
+}
+.border_right{
+  border-left:$border;
+}
+
+.calculator{
+  font-size: 32px;
+  background:#F2F2F2;
+  position: fixed;
+  left: 0;
+  width: 100%;
+  transition: all .3s linear;
+  display: flex;
+  flex-flow: row wrap;
+  .item{
+    height: 90px;
+    line-height:90px;
+    box-sizing: border-box;
+    text-align: center;
+    width: calc(100% / 4);
+    border-top:$border;
+    border-left:$border;
+  }
+}

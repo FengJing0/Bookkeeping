@@ -2,20 +2,15 @@ import Taro, { Component } from '@tarojs/taro'
 import { connect } from '@tarojs/redux'
 import { View, Text, Button } from '@tarojs/components'
 
-import { get } from '../../actions/systemInfo'
 
 import Header from '../header/header'
 import Tabber from '../tabbar/tabbar'
 
 const mapStateToProps = state => ({
-  statusBarHeight: state.systemInfo.statusBarHeight
+  statusBarHeightProps: state.systemInfo.statusBarHeight
 })
 
-const mapDispatchToProps = dispatch => ({
-  get (data) {
-    dispatch(get(data))
-  }
-})
+const mapDispatchToProps = () => ({})
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Home extends Component {
@@ -31,14 +26,9 @@ export default class Home extends Component {
 
   componentDidMount () {
     const that = this
-    Taro.getSystemInfo({
-      success: (res) => {
-        that.props.get(res.statusBarHeight)
-        that.setState({
-          statusBarHeight: res.statusBarHeight + 56,
-          height: res.statusBarHeight + 56 + 36
-        })
-      }
+    that.setState({
+      statusBarHeight: this.props.statusBarHeightProps + 56,
+      height: this.props.statusBarHeightProps + 56 + 36
     })
   }
 

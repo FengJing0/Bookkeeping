@@ -10,3 +10,17 @@ $color-inline-gradient:linear-gradient(180deg,rgba(252,138,90,1),rgba(253,106,99
   float: right;
 }
 .clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}
+
+%overview{
+   position: fixed;
+    z-index: 100;
+    top:-59px;
+    left:25px;
+    width:700px;
+    height: 114px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    box-shadow:0px 1px 6px 0px rgba(133,132,132,0.26);
+    align-items: center;
+}

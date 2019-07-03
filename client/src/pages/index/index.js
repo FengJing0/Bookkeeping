@@ -10,7 +10,7 @@ import MyPage from '../../components/myPage/myPage'
 
 export default class Index extends Component {
   state = {
-    title: '报表'
+    title: '资产'
   }
 
   componentWillMount () { }
