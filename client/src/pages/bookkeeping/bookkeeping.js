@@ -7,6 +7,8 @@ import HeaderComponent from '../../components/header/header'
 import IconComponent from '../../components/icon/icon'
 import Calculator from '../../components/calculator/calculator'
 
+import { getWeek } from '../../util/index'
+
 import './bookkeeping.scss'
 
 const mapStateToProps = state => ({
@@ -25,7 +27,7 @@ export default class Bookkeeping extends Component {
     current: 0,
     list: [],
     selectedItem: '',
-    showCalculator:false
+    showCalculator: false
   }
 
   handleClick = val => {
@@ -39,9 +41,8 @@ export default class Bookkeeping extends Component {
   onSelect = item => {
     this.setState({
       selectedItem: item._id,
-      showCalculator:true
+      showCalculator: true
     })
-    console.log(item)
   }
 
   filterCategoryList = (type) => {
@@ -53,8 +54,30 @@ export default class Bookkeeping extends Component {
     this.setState({
       current: 0,
       list,
-      selectedItem: ''
+      selectedItem: '',
+      showCalculator: false
     })
+  }
+
+  hideCalculator = e => {
+    if (e.target.dataset.hide === 'true') {
+      this.setState({
+        showCalculator: false
+      })
+    }
+  }
+
+  handleSubmit = data => {
+    const date = new Date(data.date)
+    const formData = {
+      ...data,
+      year: date.getFullYear(),
+      month: date.getMonth + 1,
+      week: getWeek(date),
+      day: date.getDate(),
+      type: this.state.selectedItem
+    }
+    console.log(formData)
   }
 
   componentDidMount () {
@@ -67,7 +90,7 @@ export default class Bookkeeping extends Component {
 
 
   render () {
-    const { values, current, list, selectedItem, showCalculator} = this.state
+    const { values, current, list, selectedItem, showCalculator } = this.state
     const { statusBarHeight } = this.props
 
     const height = statusBarHeight + 56 + 36
@@ -83,7 +106,7 @@ export default class Bookkeeping extends Component {
             ></SegmentedControl>
           </View>
         </View>
-        <View className='item-warrper clearfix' style={{ paddingTop: height + 30 + 'px' }}>
+        <View className='item-warrper clearfix' data-hide='true' style={{ paddingTop: height + 30 + 'px' }} onClick={this.hideCalculator}>
           {
             list.map(item => (
               <View className={item._id === selectedItem ? 'item fl active' : 'item fl'} key={item._id} onClick={() => this.onSelect(item)}>
@@ -95,7 +118,7 @@ export default class Bookkeeping extends Component {
             ))
           }
         </View>
-        <Calculator show={ showCalculator}></Calculator>
+        <Calculator show={showCalculator} onSubmit={data => this.handleSubmit(data)}></Calculator>
       </View>
     )
   }

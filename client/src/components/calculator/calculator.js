@@ -1,94 +1,179 @@
 import Taro, { Component } from '@tarojs/taro'
-import { CoverView } from '@tarojs/components'
+import { View, Input, Picker } from '@tarojs/components'
 
 import './calculator.scss'
+
+class CalculatorClass {
+  constructor () {
+    this.funcList = []
+    this.numList = []
+    this.tmp = ''
+    this.result = 0
+    this.show = '0'
+  }
+
+  init (flag) {
+    if (!flag) {
+      this.result = 0
+      this.show = '0'
+    }
+    this.funcList = []
+    this.numList = []
+    this.tmp = ''
+  }
+
+  pushItem (i) {
+    if (this.result) { this.init() }
+    if (this.show === '0') { this.show = '' }
+    if (!isNaN(i)) {
+      this.tmp += i
+      this.show += i
+    }
+    switch (i) {
+      case '+':
+        if (this.tmp) {
+          this.isFunc()
+          this.funcList.push('+')
+          this.show += '+'
+        }
+        break;
+      case '-':
+        if (this.tmp) {
+          this.isFunc()
+          this.funcList.push('-')
+          this.show += '-'
+        }
+        break;
+      case '.':
+        if (this.tmp.indexOf('.') === -1 && this.tmp) {
+          this.tmp += '.'
+          this.show += '.'
+        }
+        break;
+      case 'C':
+        if (!this.tmp.length) {
+          this.tmp = this.numList.pop() || ''
+        }
+        this.tmp = this.tmp.slice(0, -1)
+        this.show = this.show.slice(0, -1) || '0'
+        break;
+      case '=':
+        this.getResult()
+        this.show = this.result
+        break;
+      default:
+        break;
+    }
+    // console.log('tmp:', this.tmp)
+    // console.log('result:', this.result)
+    // console.log('funcList:', this.funcList)
+    // console.log('numList:', this.numList)
+  }
+
+  isFunc () {
+    if (this.tmp.slice(-1) === '.') {
+      this.tmp = this.tmp.slice(0, -1)
+    }
+    this.numList.push(this.tmp)
+    this.tmp = ''
+
+  }
+
+  getResult () {
+    this.isFunc()
+    let res = Number(this.numList[0])
+    for (let i = 1, len = this.numList.length; i < len; i++) {
+      let item = Number(this.numList[i])
+      if (this.funcList[i - 1] === '+') {
+        res += item
+      } else {
+        res -= item
+      }
+    }
+    this.result = res.toFixed(2)
+    this.init(true)
+  }
+}
 
 export default class Calculator extends Component {
 
   state = {
-    func: '',
-    numList:[],
-    reslut: 0
+    calculator: new CalculatorClass(),
+    showStr: '0',
+    result: 0,
+    date: '',
+    remark: ''
   }
 
   onClick = e => {
     const val = e.target.dataset.val
-    let num = Number(val)
-    if (isNaN(num)) {
-      console.log(val)
-      switch (val) {
-        case '.':
-          this.setState((prevState) => {
-            if (!prevState.includes(val)) {
-              return {
-                func: prevState.func + val
-              }
-            }
-          })
-          break;
-        case '-':
-          // this.setState((prevState) => {
-          //   numList = [...prevState.numList]
-          //   return {
-          //     func: '',
-          //     numList: prevState.prevState.push(prevState.func + val)
-          //   }
-          // })
-          break;
-        case '+':
-          this.setState((prevState) => ({
-            func: prevState.func + val
-          }))
-          break;
-        case '今天':
-          // this.setState((prevState) => ({
-          //   func: prevState.func + val
-          // }))
-          break;
-        case '完成':
-          let reslut = eval('return ' + this.state.func)
-          // this.setState((prevState) => ({
-          //   reslut: new Function('return '+prevState.func)()
-          // }))
-          this.setState({
-            reslut
-          })
-          break;
-        default:
-          break;
+    if (val === '=' && this.state.result) {
+      let date = this.state.date ? +new Date(this.state.date):+new Date()
+      this.props.onSubmit({
+        count: this.state.result,
+        date,
+        remark: this.state.remark
+      })
+    } else if (val) {
+      this.state.calculator.pushItem(val)
+      this.setState({
+        showStr: this.state.calculator.show
+      })
+      if (val === '=') {
+        this.setState({
+          result: this.state.calculator.result
+        })
       }
-    } else {
-      this.setState((prevState) => ({
-        func: prevState.func + num
-      }))
-      console.log(num)
     }
   }
 
-  onShow = () => {
-    let func = new Function('return 96+3;')
-    console.log(Object.prototype.toString.call(func))
-    console.log(func)
+  handleDateChange = e => {
+    this.setState({
+      date: e.detail.value
+    })
   }
+
+  handleRemarkChange = e => [
+    this.setState({
+      remark: e.detail.value
+    })
+  ]
+
+  componentDidHide () {
+    this.state.calculator.init()
+  }
+
   render () {
     const { show } = this.props
-    return <CoverView className='calculator' style={{ bottom: show ? '0rpx' : -300 + 'rpx' }} onClick={this.onClick}>
-      <CoverView className='item' data-val='7'>7</CoverView>
-      <CoverView className='item' data-val='8'>8</CoverView>
-      <CoverView className='item' data-val='9'>9</CoverView>
-      <CoverView className='item' data-val='今天'>今天</CoverView>
-      <CoverView className='item' data-val='4'>4</CoverView>
-      <CoverView className='item' data-val='5'>5</CoverView>
-      <CoverView className='item' data-val='6'>6</CoverView>
-      <CoverView className='item' data-val='+'>+</CoverView>
-      <CoverView className='item' data-val='1'>1</CoverView>
-      <CoverView className='item' data-val='2'>2</CoverView>
-      <CoverView className='item' data-val='3'>3</CoverView>
-      <CoverView className='item' data-val='-'>-</CoverView>
-      <CoverView className='item' data-val='.'>.</CoverView>
-      <CoverView className='item' data-val='0'>0</CoverView>
-      <CoverView className='item' data-val='C' onClick={this.onShow}>C</CoverView>
-      <CoverView className='item' data-val='完成'>完成</CoverView>
-    </CoverView>
+    const { showStr, result, date, remark } = this.state
+    return <View className='calculator' style={{ bottom: show ? '0rpx' : '-' + 90 * 6 + 'rpx' }} onClick={this.onClick}>
+      <View className='remark clearfix'>
+        <View className='text fl'>备注:</View>
+        <Input className='input fl' placeholder='' onChange={this.handleRemarkChange} value={remark} />
+      </View>
+      <View className='show' >{ showStr }</View>
+      <View className='item' data-val='7'>7</View>
+      <View className='item' data-val='8'>8</View>
+      <View className='item' data-val='9'>9</View>
+      <View className='item'>
+        <Picker mode='date' end='2019-07-08' onChange={this.handleDateChange}>
+          <View class='picker'>
+            { date ? date : '今天' }
+          </View>
+        </Picker>
+      </View>
+      <View className='item' data-val='4'>4</View>
+      <View className='item' data-val='5'>5</View>
+      <View className='item' data-val='6'>6</View>
+      <View className='item' data-val='+'>+</View>
+      <View className='item' data-val='1'>1</View>
+      <View className='item' data-val='2'>2</View>
+      <View className='item' data-val='3'>3</View>
+      <View className='item' data-val='-'>-</View>
+      <View className='item' data-val='.'>.</View>
+      <View className='item' data-val='0'>0</View>
+      <View className='item' data-val='C'>C</View>
+      <View className='item' data-val='='>{ result ? '完成' : '=' }</View>
+    </View>
   }
 }
