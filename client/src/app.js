@@ -62,20 +62,7 @@ class App extends Component {
       }
     })
     getCategory().then(res => {
-      // let result = [
-      //   { type: '支出', data: [] },
-      //   { type: '收入', data: [] }
-      // ]
-
-      // res.result.forEach(item => {
-      //   if (item.type === '支出') {
-          
-      //   } else if (item.type === '收入') {
-          
-      //   }
-      // })
-      that.props.getCategoryList(res.result)
-      // console.log(result)
+      that.props.getCategoryList(res)
     })
   }
 

@@ -8,6 +8,7 @@ import IconComponent from '../../components/icon/icon'
 import Calculator from '../../components/calculator/calculator'
 
 import { getWeek } from '../../util/index'
+import {saveData} from '../../api/index'
 
 import './bookkeeping.scss'
 
@@ -72,12 +73,15 @@ export default class Bookkeeping extends Component {
     const formData = {
       ...data,
       year: date.getFullYear(),
-      month: date.getMonth + 1,
+      month: date.getMonth() + 1,
       week: getWeek(date),
       day: date.getDate(),
-      type: this.state.selectedItem
+      category: this.state.selectedItem,
+      type: this.state.values[this.state.current]
     }
-    console.log(formData)
+    saveData(formData).then(res => {
+      console.log(res)
+    })
   }
 
   componentDidMount () {

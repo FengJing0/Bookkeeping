@@ -52,7 +52,8 @@ class CalculatorClass {
         break;
       case 'C':
         if (!this.tmp.length) {
-          this.tmp = this.numList.pop() || ''
+          let tmp = this.funcList.length === this.numList.length ? this.funcList.pop() : this.numList.pop()
+          this.tmp = tmp || ''
         }
         this.tmp = this.tmp.slice(0, -1)
         this.show = this.show.slice(0, -1) || '0'
@@ -156,7 +157,7 @@ export default class Calculator extends Component {
       <View className='item' data-val='8'>8</View>
       <View className='item' data-val='9'>9</View>
       <View className='item'>
-        <Picker mode='date' end='2019-07-08' onChange={this.handleDateChange}>
+        <Picker mode='date' onChange={this.handleDateChange}>
           <View class='picker'>
             { date ? date : '今天' }
           </View>
