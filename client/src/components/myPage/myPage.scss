@@ -13,9 +13,12 @@
     .img{
       width:120px;
       height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
     }
     .name{
       font-size:32px;
+      margin-top:10px;
     }
     .count{
       display: flex;

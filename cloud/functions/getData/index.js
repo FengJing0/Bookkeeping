@@ -34,6 +34,7 @@ exports.main = async (event, context) => {
   let data = []
   let pay = 0
   let income = 0
+  let test=[]
   for (let i = 0,
     len = result.length,
     tmp = {
@@ -47,7 +48,7 @@ exports.main = async (event, context) => {
     let item = result[i];
     if (!day) day = item.day
 
-    let category = await getCategory(result.category)
+    let category = await getCategory(item.category)
     item.category = category.data
 
     if (day !== item.day && tmp.list.length) {
@@ -78,8 +79,8 @@ exports.main = async (event, context) => {
     }
   }
   return {
-    pay: pay,
-    income: income,
+    pay,
+    income,
     data
   }
 }

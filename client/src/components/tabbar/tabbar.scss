@@ -14,7 +14,7 @@
   justify-content: space-around;
   border-top:1px solid #f2f2f3;
   .wrapper{
-    position: relative;
+    // position: relative;
     width: calc(100% / 5);
   }
   .item{
@@ -25,6 +25,7 @@
     font-size: 20px;
     &.special{
       position: absolute;
+      z-index: 200;
       top:-55px;
       left:50%;
       transform: translateX(-50%);

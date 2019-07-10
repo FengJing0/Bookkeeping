@@ -19,7 +19,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({})
 
-//  connect(() => ({ }), mapDispatchToProps)(Home)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Bookkeeping extends Component {
 
@@ -69,6 +68,10 @@ export default class Bookkeeping extends Component {
   }
 
   handleSubmit = data => {
+    Taro.showLoading({
+      title: '正在提交...',
+      mask:true
+    })
     const date = new Date(data.date)
     const formData = {
       ...data,
@@ -81,6 +84,10 @@ export default class Bookkeeping extends Component {
     }
     saveData(formData).then(res => {
       console.log(res)
+      Taro.hideLoading()
+      Taro.redirectTo({
+        url: '/pages/index/index'
+      })
     })
   }
 

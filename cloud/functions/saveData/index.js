@@ -12,6 +12,13 @@ const _ = db.command
 
 
 function saveData (data) {
+  db.collection('B_user').where({
+    openId: data.userInfo.openId,
+  }).update({
+    data: {
+      count: _.inc(1)
+    },
+  })
   return db.collection('B_acount')
     .add({
       data: {

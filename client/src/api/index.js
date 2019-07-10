@@ -1,5 +1,6 @@
+import Taro from '@tarojs/taro'
 // 填写 env
-wx.cloud.init({
+Taro.cloud.init({
   env: 'cloudminiapp-579a16'
 })
 
@@ -11,7 +12,7 @@ function isSuccess(res) {
 
 
 export const getCategory = () => {
-  return wx.cloud.callFunction({
+  return Taro.cloud.callFunction({
     name: 'getCategory',
   }).then(res => {
     return isSuccess(res)
@@ -19,7 +20,7 @@ export const getCategory = () => {
 }
 
 export const saveData = data => {
-  return wx.cloud.callFunction({
+  return Taro.cloud.callFunction({
     name: 'saveData',
     data
   }).then(res => {
@@ -28,9 +29,17 @@ export const saveData = data => {
 }
 
 export const getData = data => {
-  return wx.cloud.callFunction({
+  return Taro.cloud.callFunction({
     name: 'getData',
     data
+  }).then(res => {
+    return isSuccess(res)
+  })
+}
+
+export const checkLogin = () => {
+  return Taro.cloud.callFunction({
+    name: 'userInfo'
   }).then(res => {
     return isSuccess(res)
   })

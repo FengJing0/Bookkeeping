@@ -1,17 +1,27 @@
 import Taro, { Component } from "@tarojs/taro"
 import { View, Text, Picker } from "@tarojs/components"
+import { connect } from '@tarojs/redux'
 
 import IconComponent from '../icon/icon'
+import LoginBtn from '../loginBtn/loginBtn'
 
 import './indexPage.scss'
 
 import { getData } from '../../api/index'
 
+const mapStateToProps = state => ({
+  userInfo: state.userInfo,
+})
+
+const mapDispatchToProps = dispatch => ({})
+
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class IndexPage extends Component {
 
   state = {
     year: new Date().getFullYear(),
-    mouth: new Date().getMonth() + 1,
+    month: new Date().getMonth() + 1,
     list: [],
     pay: '0.00',
     income: '0.00'
@@ -19,46 +29,72 @@ export default class IndexPage extends Component {
 
 
   handleDateChange = e => {
-    console.log(e)
+    const date = e.detail.value.split('-')
+    this.setState({
+      year: date[0],
+      month: date[1]
+    })
+    this.getData(date[0], date[1])
   }
 
-  getData = () => {
-    getData({ year: this.state.year, month: this.state.mouth }).then(res => {
+  getData = (year, month) => {
+    if (!this.props.userInfo.nickName) return
+    getData({ year, month }).then(res => {
       // console.log(res)
-      this.setState({
+      const indexData = {
         list: res.data,
         pay: res.pay.toFixed(2),
         income: res.income.toFixed(2)
+      }
+      this.setState(indexData)
+      Taro.setStorage({
+        key: 'indexData',
+        data: JSON.stringify(indexData)
       })
     })
   }
 
   componentWillMount () { }
 
-  componentDidMount () { }
+  componentDidMount () {
+    const that = this
+    Taro.getStorage({ key: 'indexData' }).then(res => {
+      if (res.data) {
+        that.setState(JSON.parse(res.data))
+      }
+    }).catch(e => { })
+  }
 
   componentWillUnmount () { }
 
   componentDidShow () {
-    this.getData()
+    this.getData(this.state.year, this.state.month)
   }
 
   componentDidHide () { }
 
   render () {
-    const { list } = this.state
-    console.log(list)
+    const { list, year, month } = this.state
     const payList = this.state.pay.split('.')
     const incomeList = this.state.income.split('.')
+
+    const getDay = day => {
+      const weekDay = new Date(`${year}-${month}-${day}`).getDay()
+      const dayList = ['一', '二', '三', '四', '五', '六', '日']
+      return dayList[weekDay - 1]
+    }
+
     return (
       <View className='index'>
         <View className='overview'>
-          <Picker mode='date' fields='month' onChange={this.handleDateChange}>
-            <View className='item'>
-              <Text className='title'>2018年</Text>
-              <Text>12<Text className='label'>月</Text></Text>
-            </View>
-          </Picker>
+          <LoginBtn>
+            <Picker mode='date' fields='month' onChange={this.handleDateChange}>
+              <View className='item'>
+                <Text className='title'>{ year }年</Text>
+                <Text>{ month }<Text className='label'>月</Text></Text>
+              </View>
+            </Picker>
+          </LoginBtn>
           <View className='item'>
             <Text className='title'>收入</Text>
             <Text>{ incomeList[0] }<Text className='label'>.{ incomeList[1] }</Text></Text>
@@ -72,15 +108,15 @@ export default class IndexPage extends Component {
           list.map(item => (
             <View className='detail' key={item.day}>
               <View className='date'>
-                <View>12月{ item.day }日</View>
-                { item.income && <View>收入：{ item.income.toFixed(2) }</View> }
+                <View>{ month }月{ item.day }日</View>
+                <View style={{ flex: 1, marginLeft: '10rpx' }}>星期{ getDay(item.day) }</View>
+                { item.income && <View style={{ marginRight: '10rpx' }}>收入：{ item.income.toFixed(2) }</View> }
                 { item.pay && <View>支出：{ item.pay.toFixed(2) }</View> }
               </View>
               {
                 item.list.map(sub => (
                   <View className='detailItem' key={sub._id}>
                     <View className='clearfix'>
-                      {/* <Image src='../../asstes/imgs/icon/bookkeeping.png' className='img'></Image> */ }
                       <View className='fl icon'>
                         <IconComponent name={sub.category.icon}></IconComponent>
                       </View>
