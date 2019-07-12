@@ -54,7 +54,9 @@ export default class IndexPage extends Component {
     })
   }
 
-  componentWillMount () { }
+handleDetail = id => {
+ Taro.navigateTo({ url: '/pages/billDetail/billDetail?id='+id })
+}
 
   componentDidMount () {
     const that = this
@@ -65,7 +67,6 @@ export default class IndexPage extends Component {
     }).catch(e => { })
   }
 
-  componentWillUnmount () { }
 
   componentDidShow () {
     this.getData(this.state.year, this.state.month)
@@ -115,7 +116,7 @@ export default class IndexPage extends Component {
               </View>
               {
                 item.list.map(sub => (
-                  <View className='detailItem' key={sub._id}>
+                  <View className='detailItem' key={sub._id} onClick={()=>this.handleDetail(sub._id)}>
                     <View className='clearfix'>
                       <View className='fl icon'>
                         <IconComponent name={sub.category.icon}></IconComponent>

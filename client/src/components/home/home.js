@@ -1,10 +1,62 @@
-import Taro, { Component } from '@tarojs/taro'
+import Taro, { useState, useEffect } from '@tarojs/taro'
 import { connect } from '@tarojs/redux'
-import { View, Text, Button } from '@tarojs/components'
+import { View } from '@tarojs/components'
 
 
 import Header from '../header/header'
 import Tabber from '../tabbar/tabbar'
+
+
+function Home (props) {
+  const [height, setHeight] = useState(160)
+  const [statusBarHeight, setStatusBarHeight] = useState(160)
+  const [title, setTitle] = useState('资产')
+
+
+  useEffect(() => {
+    setHeight(props.statusBarHeightProps + 56 + 36)
+    setStatusBarHeight(props.statusBarHeightProps + 56 )
+  }, [props.statusBarHeightProps])
+
+  function navigator (item) {
+    const text = item.text
+    props.onNavigator(text)
+    let heights
+    switch (text) {
+      case '记账':
+        return
+      case '资产':
+        heights = statusBarHeight + 36
+        break;
+      case '我的':
+        heights = 0
+        break;
+      case '报表':
+        heights = statusBarHeight + 36
+        break;
+      default:
+        heights = statusBarHeight
+        break;
+    }
+    setTitle(text)
+    setHeight(heights)
+  }
+
+  return (
+    <View className='home'>
+      { title !== '我的' && <Header title={title} height={height}></Header> }
+      <View style={{ paddingTop: height + 'px' }}>
+        { props.children }
+      </View>
+      <Tabber onNavigator={navigator} title={title} />
+    </View>
+  )
+}
+
+Home.defaultProps = {
+  onNavigator: () => { }
+}
+
 
 const mapStateToProps = state => ({
   statusBarHeightProps: state.systemInfo.statusBarHeight
@@ -12,63 +64,4 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = () => ({})
 
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Home extends Component {
-  state = {
-    height: 160,
-    statusBarHeight: 160,
-    title: '资产'
-  }
-
-  static defaultProps = {
-    onNavigator: () => { }
-  }
-
-  componentDidMount () {
-    const that = this
-    that.setState({
-      statusBarHeight: this.props.statusBarHeightProps + 56,
-      height: this.props.statusBarHeightProps + 56 + 36
-    })
-  }
-
-  navigator = item => {
-    const title = item.text
-    this.props.onNavigator(title)
-    let height
-    switch (title) {
-      case '记账':
-        return
-      case '资产':
-        height = this.state.statusBarHeight + 36
-        break;
-      case '我的':
-        height = 0
-        break;
-      case '报表':
-        height = this.state.statusBarHeight + 36
-        break;
-      default:
-        height = this.state.statusBarHeight
-        break;
-    }
-    this.setState({
-      title,
-      height
-    })
-
-  }
-
-  render () {
-    const { height, title } = this.state
-
-    return (<View className='home'>
-      { title !== '我的' && <Header title={title} height={height}></Header> }
-      <View style={{ paddingTop: height + 'px' }}>
-        { this.props.children }
-      </View>
-      <Tabber onNavigator={this.navigator} title={title} />
-    </View>)
-  }
-}
-
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

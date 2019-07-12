@@ -8,7 +8,7 @@ import IconComponent from '../../components/icon/icon'
 import Calculator from '../../components/calculator/calculator'
 
 import { getWeek } from '../../util/index'
-import {saveData} from '../../api/index'
+import { saveData } from '../../api/index'
 
 import './bookkeeping.scss'
 
@@ -27,14 +27,16 @@ export default class Bookkeeping extends Component {
     current: 0,
     list: [],
     selectedItem: '',
-    showCalculator: false
+    showCalculator: false,
+    detailData: {}
   }
 
   handleClick = val => {
     let list = this.filterCategoryList(val)
     this.setState({
       current: val,
-      list
+      list,
+      showCalculator:false
     })
   }
 
@@ -68,40 +70,47 @@ export default class Bookkeeping extends Component {
   }
 
   handleSubmit = data => {
-    Taro.showLoading({
-      title: '正在提交...',
-      mask:true
-    })
-    const date = new Date(data.date)
-    const formData = {
-      ...data,
-      year: date.getFullYear(),
-      month: date.getMonth() + 1,
-      week: getWeek(date),
-      day: date.getDate(),
-      category: this.state.selectedItem,
-      type: this.state.values[this.state.current]
-    }
-    saveData(formData).then(res => {
-      console.log(res)
-      Taro.hideLoading()
-      Taro.redirectTo({
-        url: '/pages/index/index'
-      })
-    })
+    console.log(data)
+    // Taro.showLoading({
+    //   title: '正在提交...',
+    //   mask: true
+    // })
+    // const date = new Date(data.date)
+    // const formData = {
+    //   ...data,
+    //   year: date.getFullYear(),
+    //   month: date.getMonth() + 1,
+    //   week: getWeek(date),
+    //   day: date.getDate(),
+    //   category: this.state.selectedItem,
+    //   type: this.state.values[this.state.current]
+    // }
+    // saveData(formData).then(res => {
+    //   Taro.hideLoading()
+    //   Taro.redirectTo({
+    //     url: '/pages/index/index'
+    //   })
+    // })
   }
 
   componentDidMount () {
+    if (this.$router.params.detail) {
+      Taro.getStorage({ key: 'detailData' }).then(res => {
+        this.setState({
+          detailData: res.data,
+          showCalculator:true
+        })
+        // console.log(res.data)
+      })
+      
+    }
     this.init()
   }
 
-  componentDidHide () {
-    this.init()
-  }
 
 
   render () {
-    const { values, current, list, selectedItem, showCalculator } = this.state
+    const { values, current, list, selectedItem, showCalculator, detailData } = this.state
     const { statusBarHeight } = this.props
 
     const height = statusBarHeight + 56 + 36
@@ -129,7 +138,7 @@ export default class Bookkeeping extends Component {
             ))
           }
         </View>
-        <Calculator show={showCalculator} onSubmit={data => this.handleSubmit(data)}></Calculator>
+        <Calculator detailData={ detailData} show={showCalculator} onSubmit={data => this.handleSubmit(data)}></Calculator>
       </View>
     )
   }

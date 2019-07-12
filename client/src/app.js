@@ -45,7 +45,8 @@ class App extends Component {
   config = {
     pages: [
       'pages/index/index',
-      'pages/bookkeeping/bookkeeping'
+      'pages/bookkeeping/bookkeeping',
+      'pages/billDetail/billDetail'
     ],
     window: {
       backgroundTextStyle: 'light',

@@ -44,3 +44,12 @@ export const checkLogin = () => {
     return isSuccess(res)
   })
 }
+
+export const getBillDetail = (data) => {
+  return Taro.cloud.callFunction({
+    name: 'getBillDetail',
+    data
+  }).then(res => {
+    return isSuccess(res)
+  })
+}

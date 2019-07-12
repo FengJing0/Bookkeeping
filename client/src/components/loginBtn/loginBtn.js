@@ -5,6 +5,26 @@ import { get as getUserInfoAction } from '../../actions/userInfo'
 
 import './loginBtn.scss'
 
+
+
+function LoginBtn (props) {
+  const specialStyle = {
+    height: 'calc(100% + 55rpx)',
+    top: '-55rpx'
+  }
+  
+  function handleGetUserInfo (e) {
+    if (e.detail.userInfo) {
+      props.dispatchGetUserInfo(e.detail.userInfo)
+    }
+  }
+
+  return (<View className='login_wrapper'>
+    { !props.userInfo.nickName && <Button open-type='getUserInfo' onGetUserInfo={handleGetUserInfo} className='loginBtn' style={props.isSpecial ? specialStyle : {}}>登录</Button> }
+    { props.children }
+  </View>)
+}
+
 const mapStateToProps = state => ({
   userInfo: state.userInfo,
 })
@@ -15,24 +35,4 @@ const mapDispatchToProps = dispatch => ({
   },
 })
 
-
-@connect(mapStateToProps, mapDispatchToProps)
-export default class LoginBtn extends Component {
-
-  handleGetUserInfo = e => {
-    if (e.detail.userInfo) {
-      this.props.dispatchGetUserInfo(e.detail.userInfo)
-    }
-  }
-
-  render () {
-    const specialStyle = {
-      height: 'calc(100% + 55rpx)',
-      top: '-55rpx'
-    }
-    return <View className='login_wrapper'>
-      { !this.props.userInfo.nickName && <Button open-type='getUserInfo' onGetUserInfo={this.handleGetUserInfo} className='loginBtn' style={this.props.isSpecial ? specialStyle : {}}>登录</Button> }
-      { this.props.children }
-    </View>
-  }
-}
+export default connect(mapStateToProps, mapDispatchToProps)(LoginBtn)

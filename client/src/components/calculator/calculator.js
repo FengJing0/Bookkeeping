@@ -94,6 +94,11 @@ class CalculatorClass {
     this.result = res.toFixed(2)
     this.init(true)
   }
+
+  setItem (item) {
+    this.tmp = item
+    this.show = item
+  }
 }
 
 export default class Calculator extends Component {
@@ -103,13 +108,15 @@ export default class Calculator extends Component {
     showStr: '0',
     result: 0,
     date: '',
-    remark: ''
+    remark: '',
+    keyboardHeight: 0,
+    id:0
   }
 
   onClick = e => {
     const val = e.target.dataset.val
     if (val === '=' && this.state.result) {
-      let date = this.state.date ? +new Date(this.state.date):+new Date()
+      let date = this.state.date ? +new Date(this.state.date) : +new Date()
       this.props.onSubmit({
         count: this.state.result,
         date,
@@ -134,23 +141,87 @@ export default class Calculator extends Component {
     })
   }
 
-  handleRemarkChange = e => [
+  handleRemarkChange = e => {
     this.setState({
       remark: e.detail.value
     })
-  ]
+  }
 
-  componentDidHide () {
+  handleSetKeyboardHeight = e => {
+    this.setState({
+      keyboardHeight: e.detail.height || 0
+    })
+  }
+
+  componentDidMount () {
+    // console.log(this.props.detailData)
     this.state.calculator.init()
   }
 
+  // componentDidShow () {
+  //   console.log(this.props.detailData)
+  // }
+
+  componentWillReceiveProps (props) {
+    // console.log(props)
+    if (props.detailData._id&&!this.state.id) {
+      console.log(props.detailData)
+      const data = props.detailData
+      this.setState({
+        date: `${data.year}-${data.month}-${data.day}`,
+        remark: data.remark,
+        showStr: data.count,
+        id:data._id
+      })
+      this.state.calculator.setItem(data.count)
+    }
+  }
+
+  componentWillUpdate () {
+    // category: "5d1c4ce07dd096bdc4543163"
+    // count: "99.00"
+    // createTime: 1562660066251
+    // date: 1562660066491
+    // day: 9
+    // deleteTime: null
+    // month: 7
+    // openId: "oVTUJ44-1kXNtVp4NnqgXrpONUlQ"
+    // remark: ""
+    // type: "支出"
+    // week: 27
+    // year: 2019
+    // _id: "f1006ad85d244ce203f05ae62ab18a8b"
+  }
+
+  // componentDidHide () {
+  //   this.state.calculator.init()
+  // }
+
   render () {
     const { show } = this.props
-    const { showStr, result, date, remark } = this.state
+    const { showStr, result, date, remark, keyboardHeight } = this.state
+
+    const keyboardStyle = {
+      position: 'fixed',
+      bottom: keyboardHeight + 'px',
+      left: 0,
+      zIndex: 1000
+    }
+
     return <View className='calculator' style={{ bottom: show ? '0rpx' : '-' + 90 * 6 + 'rpx' }} onClick={this.onClick}>
-      <View className='remark clearfix'>
+      <View className='remark clearfix' style={keyboardHeight ? keyboardStyle : {}}>
         <View className='text fl'>备注:</View>
-        <Input className='input fl' placeholder='' onChange={this.handleRemarkChange} value={remark} />
+        <Input
+          className='input fl'
+          adjust-position={false}
+          placeholder=''
+          onChange={this.handleRemarkChange}
+          onKeyboardheightchange={this.handleSetKeyboardHeight}
+          onFocus={this.handleSetKeyboardHeight}
+          onBlur={this.handleSetKeyboardHeight}
+          type='text'
+          value={remark}
+        />
       </View>
       <View className='show' >{ showStr }</View>
       <View className='item' data-val='7'>7</View>
