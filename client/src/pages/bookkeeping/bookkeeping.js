@@ -71,26 +71,26 @@ export default class Bookkeeping extends Component {
 
   handleSubmit = data => {
     console.log(data)
-    // Taro.showLoading({
-    //   title: '正在提交...',
-    //   mask: true
-    // })
-    // const date = new Date(data.date)
-    // const formData = {
-    //   ...data,
-    //   year: date.getFullYear(),
-    //   month: date.getMonth() + 1,
-    //   week: getWeek(date),
-    //   day: date.getDate(),
-    //   category: this.state.selectedItem,
-    //   type: this.state.values[this.state.current]
-    // }
-    // saveData(formData).then(res => {
-    //   Taro.hideLoading()
-    //   Taro.redirectTo({
-    //     url: '/pages/index/index'
-    //   })
-    // })
+    Taro.showLoading({
+      title: '正在提交...',
+      mask: true
+    })
+    const date = new Date(data.date)
+    const formData = {
+      ...data,
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      week: getWeek(date),
+      day: date.getDate(),
+      category: this.state.selectedItem,
+      type: this.state.values[this.state.current]
+    }
+    saveData(formData).then(res => {
+      Taro.hideLoading()
+      Taro.redirectTo({
+        url: '/pages/index/index'
+      })
+    })
   }
 
   componentDidMount () {
@@ -98,6 +98,7 @@ export default class Bookkeeping extends Component {
       Taro.getStorage({ key: 'detailData' }).then(res => {
         this.setState({
           detailData: res.data,
+          selectedItem: res.data.category,
           showCalculator:true
         })
         // console.log(res.data)

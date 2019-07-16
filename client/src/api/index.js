@@ -53,3 +53,12 @@ export const getBillDetail = (data) => {
     return isSuccess(res)
   })
 }
+
+export const deleteBillDetail = (data) => {
+  return Taro.cloud.callFunction({
+    name: 'saveData',
+    data
+  }).then(res => {
+    return isSuccess(res)
+  })
+}

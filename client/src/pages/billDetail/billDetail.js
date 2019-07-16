@@ -5,7 +5,7 @@ import { View, Text, Button } from "@tarojs/components"
 import HeaderComponent from '../../components/header/header'
 import IconComponent from '../../components/icon/icon'
 
-import { getBillDetail } from '../../api/index'
+import { getBillDetail, deleteBillDetail } from '../../api/index'
 
 import './billDetail.scss'
 
@@ -42,13 +42,33 @@ export default class BillDetail extends Component {
   }
 
   handleEdit = () => {
-    Taro.setStorage({key:'detailData', data:this.state.detailData}).then(res => {
+    Taro.setStorage({ key: 'detailData', data: this.state.detailData }).then(res => {
       Taro.navigateTo({ url: '/pages/bookkeeping/bookkeeping?detail=true' })
     })
   }
 
   handleDelete = () => {
-    console.log(this.state.id)
+    Taro.showModal({
+      title: '删除',
+      content: '是否删除该账单？一旦删除将无法恢复！',
+    })
+      .then(res => {
+        if (res.confirm) {
+          Taro.showLoading({
+            title: '删除中...'
+          })
+          deleteBillDetail({
+            id: this.state.id,
+            deleteTime: +new Date()
+          }).then(result => {
+            if (result === 1) {
+              console.log(result)
+              Taro.hideLoading()
+              Taro.navigateBack()
+            }
+          })
+        }
+      })
   }
 
   render () {

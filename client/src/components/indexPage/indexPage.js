@@ -11,6 +11,7 @@ import { getData } from '../../api/index'
 
 const mapStateToProps = state => ({
   userInfo: state.userInfo,
+  statusBarHeight: state.systemInfo.statusBarHeight,
 })
 
 const mapDispatchToProps = dispatch => ({})
@@ -29,7 +30,7 @@ export default class IndexPage extends Component {
 
 
   handleDateChange = e => {
-    const date = e.detail.value.split('-')
+    const date = e.detail.value.split('-').map(i=>Number(i))
     this.setState({
       year: date[0],
       month: date[1]
@@ -38,9 +39,9 @@ export default class IndexPage extends Component {
   }
 
   getData = (year, month) => {
-    if (!this.props.userInfo.nickName) return
+    // if (!this.props.userInfo.nickName) return
     getData({ year, month }).then(res => {
-      // console.log(res)
+      // console.log(res.data)
       const indexData = {
         list: res.data,
         pay: res.pay.toFixed(2),
@@ -54,9 +55,9 @@ export default class IndexPage extends Component {
     })
   }
 
-handleDetail = id => {
- Taro.navigateTo({ url: '/pages/billDetail/billDetail?id='+id })
-}
+  handleDetail = e => {
+    Taro.navigateTo({ url: '/pages/billDetail/billDetail?id=' + e.target.dataset.val })
+  }
 
   componentDidMount () {
     const that = this
@@ -85,9 +86,13 @@ handleDetail = id => {
       return dayList[weekDay - 1]
     }
 
+    const { statusBarHeight } = this.props
+
+    const height = statusBarHeight + 56 + 36
+
     return (
       <View className='index'>
-        <View className='overview'>
+        <View className='overview' style={ { marginTop: height + 'px' } }>
           <LoginBtn>
             <Picker mode='date' fields='month' onChange={this.handleDateChange}>
               <View className='item'>
@@ -116,7 +121,7 @@ handleDetail = id => {
               </View>
               {
                 item.list.map(sub => (
-                  <View className='detailItem' key={sub._id} onClick={()=>this.handleDetail(sub._id)}>
+                  <View className='detailItem' key={sub._id} onClick={this.handleDetail} dataVal={sub._id}>
                     <View className='clearfix'>
                       <View className='fl icon'>
                         <IconComponent name={sub.category.icon}></IconComponent>

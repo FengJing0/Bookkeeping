@@ -4,9 +4,10 @@ $border:1px solid #E6E6E6;
 
 .index{
   position: relative;
+  padding-bottom: 120px;
   .overview{
     @extend %overview;
-    position: absolute;
+    // position: absolute;
     justify-content: space-around;
     .item{
       text-align: center;

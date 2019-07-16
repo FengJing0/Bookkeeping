@@ -17,7 +17,8 @@ function getData (openId, year, month) {
     .where({
       openId,
       year,
-      month
+      month,
+      deleteTime: _.eq(0)
     }).orderBy('date','desc').get()
 }
 

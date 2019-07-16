@@ -120,6 +120,7 @@ export default class Calculator extends Component {
       this.props.onSubmit({
         count: this.state.result,
         date,
+        id:this.state.id,
         remark: this.state.remark
       })
     } else if (val) {
@@ -127,6 +128,11 @@ export default class Calculator extends Component {
       this.setState({
         showStr: this.state.calculator.show
       })
+      if (val === 'C' && this.state.result) {
+        this.setState({
+          result: 0
+        })
+      }
       if (val === '=') {
         this.setState({
           result: this.state.calculator.result
@@ -176,26 +182,6 @@ export default class Calculator extends Component {
       this.state.calculator.setItem(data.count)
     }
   }
-
-  componentWillUpdate () {
-    // category: "5d1c4ce07dd096bdc4543163"
-    // count: "99.00"
-    // createTime: 1562660066251
-    // date: 1562660066491
-    // day: 9
-    // deleteTime: null
-    // month: 7
-    // openId: "oVTUJ44-1kXNtVp4NnqgXrpONUlQ"
-    // remark: ""
-    // type: "支出"
-    // week: 27
-    // year: 2019
-    // _id: "f1006ad85d244ce203f05ae62ab18a8b"
-  }
-
-  // componentDidHide () {
-  //   this.state.calculator.init()
-  // }
 
   render () {
     const { show } = this.props
