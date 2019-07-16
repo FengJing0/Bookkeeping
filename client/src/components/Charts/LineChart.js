@@ -15,7 +15,7 @@ function setChartData(chart, data) {
       show: true,
       trigger: 'axis',
       axisPointer: {
-        type: 'cross',
+        type: 'line',
         label: {
           backgroundColor: '#6a7985'
         }
@@ -36,7 +36,8 @@ function setChartData(chart, data) {
         type : 'value'
       }
     ],
-    series : []
+    series: [],
+    animation:false
   };
   if (data && data.dimensions && data.measures) {
     option.xAxis[0].data = data.dimensions.data
