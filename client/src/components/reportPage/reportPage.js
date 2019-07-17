@@ -38,6 +38,10 @@ export default class ReportPage extends Component {
   }
 
   getData = () => {
+    Taro.showLoading({
+      title: '加载中...',
+      mask: true
+    })
     const { selectorChecked, values, current, dateList, currentIndex } = this.state
     let date = parseFloat(dateList[currentIndex])
     if (isNaN(date)) {
@@ -100,7 +104,8 @@ export default class ReportPage extends Component {
           chartData
         }
       }, () => {
-        this.chart.refresh(this.setChartData())
+          this.chart.refresh(this.setChartData())
+          Taro.hideLoading ()
       })
     })
   }
@@ -235,6 +240,10 @@ export default class ReportPage extends Component {
 
   componentDidMount () {
     // this.getData()
+    Taro.showLoading({
+      title: '加载中...',
+      mask:true
+    })
     this.getDateList()
 
     setTimeout(() => {
@@ -302,7 +311,7 @@ export default class ReportPage extends Component {
                   <View className='fl' style={{ marginLeft: '30rpx' }}>{ item.percent }</View>
                   <View className='fr'>{ item.count }</View>
                 </View>
-                <View className='bar'></View>
+                <View className='bar' style={ { width: item.percent}}></View>
               </View>
             </View>))
           }

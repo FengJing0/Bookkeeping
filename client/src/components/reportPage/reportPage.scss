@@ -2,7 +2,7 @@
 
 .report{
 position: relative;
-padding-bottom: 120px;
+padding-bottom: 175px;
   .overview{
    @extend %overview;
     .SegmentedControl{
@@ -33,7 +33,6 @@ padding-bottom: 120px;
       }
     }
     .picker{
-      $color:#FC8A5A;
       font-size: 30px;
       padding:10px 32px;
       color:$color-primary;
@@ -74,10 +73,10 @@ padding-bottom: 120px;
         width:64px;
         height: 64px;
         border-radius: 50%;
-        background-color: $color-primary;
+        background-color: #f7f7f7;
         text-align: center;
         line-height: 64px;
-        color:#fff;
+        color:$color-primary;
       }
       .warpper{
         flex:1;
@@ -86,6 +85,7 @@ padding-bottom: 120px;
           margin-top:10px;
           height: 16px;
           width: 100%;
+          min-width: 10px;
           border-radius: 8px;
           background: $color-inline-gradient;
         }

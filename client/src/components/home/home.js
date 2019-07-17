@@ -31,6 +31,9 @@ function Home (props) {
       case '我的':
         heights = 0
         break;
+      case '账单':
+        heights = 0
+        break;
       case '报表':
         heights = statusBarHeight + 36
         break;
@@ -44,7 +47,7 @@ function Home (props) {
 
   return (
     <View className='home'>
-      { title !== '我的' && <Header title={title} height={height}></Header> }
+      { (title !== '我的' && title !=='账单') && <Header title={title} height={height}></Header> }
       <View style={{ paddingTop: height + 'px' }}>
         { props.children }
       </View>

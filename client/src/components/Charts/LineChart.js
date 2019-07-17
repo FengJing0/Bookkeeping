@@ -1,9 +1,9 @@
 import Taro, { Component } from "@tarojs/taro";
 import * as echarts from "./ec-canvas/echarts";
 
-function setChartData(chart, data) {
+function setChartData (chart, data) {
   let option = {
-    color: ['#3398DB'],
+    color: ['#999'],
     grid: {
       containLabel: true,
       left: 0,
@@ -19,9 +19,14 @@ function setChartData(chart, data) {
         label: {
           backgroundColor: '#6a7985'
         }
-      }
+      },
+      formatter: function (params) {
+        // console.log(params)
+        params = params[0];
+        return `${params.name}:${params.value}元`;
+      },
     },
-    xAxis : [
+    xAxis: [
       {
         type: 'category',
         boundaryGap: false,
@@ -31,21 +36,28 @@ function setChartData(chart, data) {
         }
       }
     ],
-    yAxis : [
+    yAxis: [
       {
         // show: false,
-        type : 'value'
+        type: 'value'
       }
     ],
     series: [],
-    animation:false
+    animation: false
   };
   if (data && data.dimensions && data.measures) {
     option.xAxis[0].data = data.dimensions.data
     option.series = data.measures.map(item => {
       return {
         ...item,
-        type:'line',
+        type: 'line',
+        itemStyle: {
+          color: '#FC7F5D'
+        },
+        lineStyle: {
+          color: '#999',
+          width: 1
+        }
       }
     })
   }
@@ -59,7 +71,7 @@ export default class LineChart extends Component {
     }
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props);
   }
 
@@ -73,9 +85,9 @@ export default class LineChart extends Component {
   //   console.log(props)
   //   this.refresh(props.chartData)
   // }
-  
 
-  refresh(data) {
+
+  refresh (data) {
     this.Chart.init((canvas, width, height) => {
       const chart = echarts.init(canvas, null, {
         width: width,
@@ -88,11 +100,11 @@ export default class LineChart extends Component {
 
   refChart = node => (this.Chart = node);
 
-  render() {
+  render () {
     return (
       <ec-canvas
         ref={this.refChart}
-        canvas-id="mychart-area"
+        canvas-id='mychart-area'
         ec={this.state.ec}
       />
     );

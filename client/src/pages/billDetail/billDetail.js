@@ -27,7 +27,8 @@ export default class BillDetail extends Component {
   componentDidMount () {
     const id = this.$router.params.id
     Taro.showLoading({
-      title: '正在加载...'
+      title: '正在加载...',
+      mask:true
     })
     this.setState({
       id
@@ -55,7 +56,8 @@ export default class BillDetail extends Component {
       .then(res => {
         if (res.confirm) {
           Taro.showLoading({
-            title: '删除中...'
+            title: '删除中...',
+            mask:true
           })
           deleteBillDetail({
             id: this.state.id,
