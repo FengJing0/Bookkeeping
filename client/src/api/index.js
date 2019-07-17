@@ -62,3 +62,12 @@ export const deleteBillDetail = (data) => {
     return isSuccess(res)
   })
 }
+
+export const getChartData = (data) => {
+  return Taro.cloud.callFunction({
+    name: 'getChartData',
+    data
+  }).then(res => {
+    return isSuccess(res)
+  })
+}

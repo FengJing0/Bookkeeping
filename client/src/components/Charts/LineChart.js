@@ -33,6 +33,7 @@ function setChartData(chart, data) {
     ],
     yAxis : [
       {
+        // show: false,
         type : 'value'
       }
     ],

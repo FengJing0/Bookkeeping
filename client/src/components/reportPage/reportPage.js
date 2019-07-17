@@ -8,12 +8,14 @@ import LineChart from "../Charts/LineChart";
 
 import './reportPage.scss'
 
-import { getWeek } from '../../util/index'
+import { getWeek, getWeekDate, getMonthDate } from '../../util/index'
 
-// import { getData } from '../../api/index'
+import { getChartData } from '../../api/index'
+
 const mapStateToProps = state => ({
   userInfo: state.userInfo,
   statusBarHeight: state.systemInfo.statusBarHeight,
+  category: state.category
 })
 
 const mapDispatchToProps = dispatch => ({})
@@ -22,35 +24,94 @@ const mapDispatchToProps = dispatch => ({})
 export default class ReportPage extends Component {
   state = {
     values: ['周', '月', '年'],
-    selector: ['支出', '收入'],
-    current: 0,
-    currentIndex: 0,
+    current: 0,// 年月日的Index
     dateList: [],
-    selectorChecked: '支出',
-    detailList: [],
-    chartData: [0, 0, 0, 0, 0, 0, 0]
-
+    currentIndex: 0, // dateList的index
+    selector: ['支出', '收入'],
+    selectorChecked: '支出', // 当前选中的type
+    detailList: [],  // 底部列表数据
+    // chartData: [0, 0, 0, 0, 0, 0, 0],  // 图表的数据，y轴
+    // chartDateList: [], // 图表的x轴
+    chartData: {},
+    total: '0.00',
+    average: '0.00'
   }
 
   getData = () => {
-    this.setState({
-      detailList: [
-        {
-          type: '购物',
-          icon: 'shejiao',
-          count: 80.88
+    const { selectorChecked, values, current, dateList, currentIndex } = this.state
+    let date = parseFloat(dateList[currentIndex])
+    if (isNaN(date)) {
+      const now = new Date()
+      switch (values[current]) {
+        case '周':
+          date = getWeek(now)
+          break;
+        case '月':
+          date = now.getMonth() + 1
+          break;
+        case '年':
+          date = now.getFullYear()
+          break;
+        default:
+          break;
+      }
+    }
+    return getChartData({
+      type: selectorChecked,
+      dateType: values[current],
+      date,
+    }).then(res => {
+      console.log(res)
+      this.setState((state, props) => {
+        let chartData = state.chartData
+        const total = res.total.toFixed(2)
+        const average = (res.total / Object.keys(chartData).length).toFixed(2)
+        res.data.forEach(i => {
+          let key
+          switch (values[current]) {
+            case '周':
+              key = `${i.month}-${i.day}`
+              break;
+            case '月':
+              key = i.day
+              break;
+            case '年':
+              key = i.month
+              break;
+            default:
+              break;
+          }
+          chartData[key] += +i.count
+        })
+
+        let detailList = []
+
+        for (const key in res.categoryData) {
+          const count = res.categoryData[key]
+          let obj = props.category.filter(i => i._id === key)[0]
+          obj.count = count.toFixed(2)
+          obj.percent = (count / res.total * 100).toFixed(2) + '%'
+          detailList.push(obj)
         }
-      ]
+        return {
+          total,
+          average,
+          detailList,
+          chartData
+        }
+      }, () => {
+        this.chart.refresh(this.setChartData())
+      })
     })
   }
 
   setChartData () {
     return ({
-      dimensions: {
-        data: this.state.dateList
+      dimensions: {// x
+        data: Object.keys(this.state.chartData)
       },
-      measures: [{
-        data: this.state.chartData
+      measures: [{// y
+        data: Object.values(this.state.chartData).map(i => i.toFixed(2))
       }]
     })
   }
@@ -58,28 +119,39 @@ export default class ReportPage extends Component {
   handleClick = (val) => {
     this.setState({
       current: val,
-      dateList: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月',],
       currentIndex: 0,
-      chartData: [10, 52, 200, 334, 390, 330, 220, 334, 390, 330, 220, 52]
     }, () => {
-        this.chart.refresh(this.setChartData());
+      this.getDateList()
     })
   }
 
   onChange = (e) => {
-    this.setState({
-      selectorChecked: this.state.selector[e.detail.value]
+    this.setState((state) => {
+      let chartData = state.chartData
+      for (const key in chartData) {
+        chartData[key]=0
+      }
+      return {
+        selectorChecked: this.state.selector[e.detail.value],
+        chartData
+      }
+    }, () => {
+        this.getData()
     })
   }
 
   handleClickDate = (index) => {
+    if (index === this.state.currentIndex) return
     this.setState({
       currentIndex: index
+    }, () => {
+      this.getChartDateList()
     })
-    console.log(this.state.dateList[index])
   }
 
-  getDateList = (type) => {
+  getDateList = () => {
+    const { values, current } = this.state
+    const type = values[current]
     const date = new Date(this.props.userInfo.createTime)
     const now = new Date()
     let start
@@ -87,6 +159,8 @@ export default class ReportPage extends Component {
     let dateListTmp = []
     switch (type) {
       case '周':
+        // start = 20
+        // end = 28
         start = getWeek(date)
         end = getWeek(now)
         for (let i = 0; i <= end - start; i++) {
@@ -96,6 +170,8 @@ export default class ReportPage extends Component {
         dateListTmp.splice(-1, 1, '本周')
         break;
       case '月':
+        // start = 1
+        // end = 12
         start = date.getMonth() + 1
         end = now.getMonth() + 1
         for (let i = 0; i <= end - start; i++) {
@@ -118,25 +194,58 @@ export default class ReportPage extends Component {
     }
     this.setState({
       dateList: dateListTmp
+    }, () => {
+      this.getChartDateList()
+    })
+  }
+
+  getChartDateList = () => {
+    const { values, current, dateList, currentIndex } = this.state
+    const type = values[current]
+    let date = parseFloat(dateList[currentIndex])
+    let now = new Date()
+    let dateListTmp = {}
+    switch (type) {
+      case '周':
+        if (isNaN(date)) {
+          date = getWeek(now)
+        }
+        dateListTmp = getWeekDate(date)
+        break;
+      case '月':
+        if (isNaN(date)) {
+          date = now.getMonth() + 1
+        }
+        dateListTmp = getMonthDate(date)
+        break;
+      case '年':
+        for (let i = 1; i <= 12; i++) {
+          dateListTmp[i] = 0
+        }
+        break;
+      default:
+        break;
+    }
+    this.setState({
+      chartData: dateListTmp
+    }, () => {
+      this.getData()
     })
   }
 
   componentDidMount () {
-    const { values, current } = this.state
-    this.getData()
-    this.getDateList(values[current])
-    setTimeout(() => {    
+    // this.getData()
+    this.getDateList()
+
+    setTimeout(() => {
       this.chart.refresh(this.setChartData());
     }, 20);
   }
 
-  refLineChart = (node) => {
-    this.chart = node
-    // this.chart.refresh(this.setChartData());
-  }
+  refLineChart = (node) => this.chart = node
 
   render () {
-    const { values, current, dateList, currentIndex, selectorChecked, detailList } = this.state
+    const { values, current, dateList, currentIndex, selectorChecked, detailList, total, average } = this.state
     const height = this.props.statusBarHeight + 56 + 36
     return (
       <View className='report'>
@@ -172,9 +281,10 @@ export default class ReportPage extends Component {
             </Picker>
           </View>
         </View>
-
-        <View>总支出:88.00</View>
-        <View>平均值:14.22</View>
+        <View className='text'>
+          <View>总{ selectorChecked }:{ total }</View>
+          <View>平均值:{ average }</View>
+        </View>
         <View className='echarts'>
           <LineChart ref={this.refLineChart}></LineChart>
         </View>
@@ -182,14 +292,14 @@ export default class ReportPage extends Component {
         <View className='detail'>
           <View className='title'>{ selectorChecked }排行榜</View>
           {
-            detailList.map((item, index) => (<View className='item' key={item.type + index}>
+            detailList.map((item, index) => (<View className='item' key={item.name + index}>
               <View className='icon'>
                 <IconComponent name={item.icon}></IconComponent>
               </View>
               <View className='warpper'>
                 <View className='clearfix'>
-                  <View className='fl'>{ item.type }</View>
-                  <View className='fl' style={{ marginLeft: '30rpx' }}>20%</View>
+                  <View className='fl'>{ item.name }</View>
+                  <View className='fl' style={{ marginLeft: '30rpx' }}>{ item.percent }</View>
                   <View className='fr'>{ item.count }</View>
                 </View>
                 <View className='bar'></View>
@@ -202,187 +312,3 @@ export default class ReportPage extends Component {
     )
   }
 }
-
-
-
-
-// function ReportPage (props) {
-//   const values = ['周', '月', '年']
-//   const selector = ['支出', '收入']
-//   const [current, setCurrent] = useState(0)
-//   const [currentIndex, setCurrentIndex] = useState(0)
-//   const [dateList, setDateList] = useState([])
-//   const [selectorChecked, setDelectorChecked] = useState('支出')
-//   const [detailList, setDetailList] = useState([])
-//   const [chartData, setChartData] = useState({
-//     dimensions: {
-//       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-//     },
-//     measures: [{
-//       data: [0, 0, 0, 0, 0, 0, 0]
-//     }]
-//   })
-
-//   const chart = useRef(null)
-
-//   const height = props.statusBarHeight + 56 + 36
-
-//   function handleClick (val) {
-//     setCurrent(val)
-//     // getDateList(values[val])
-//     setDateList(['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月',])
-//     setCurrentIndex(dateList.length - 1)
-//     setChartData({
-//       dimensions: {
-//         data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-//       },
-//       measures: [{
-//         data: [10, 52, 200, 334, 390, 330, 220]
-//       }]
-//     })
-//     console.log(chart.current)
-//   }
-
-//   function onChange (e) {
-//     setDelectorChecked(selector[e.detail.value])
-//   }
-
-//   function getData () {
-//     setDetailList([
-//       {
-//         type: '购物',
-//         icon: 'shejiao',
-//         count: 80.88
-//       }
-//     ])
-//   }
-
-//   function handleClickDate (index) {
-//     setCurrentIndex(index)
-//     console.log(dateList[index])
-//   }
-
-//   function getDateList (type) {
-//     const date = new Date(props.userInfo.createTime)
-//     const now = new Date()
-//     let start
-//     let end
-//     let dateListTmp = []
-//     switch (type) {
-//       case '周':
-//         start = getWeek(date)
-//         end = getWeek(now)
-//         for (let i = 0; i <= end - start; i++) {
-//           dateListTmp.push(start + i)
-//         }
-//         dateListTmp = dateListTmp.map(i => i + type)
-//         dateListTmp.splice(-1, 1, '本周')
-//         setDateList(dateListTmp)
-//         break;
-//       case '月':
-//         start = date.getMonth() + 1
-//         end = now.getMonth() + 1
-//         for (let i = 0; i <= end - start; i++) {
-//           dateListTmp.push(start + i)
-//         }
-//         dateListTmp = dateListTmp.map(i => i + type)
-//         dateListTmp.splice(-1, 1, '本月')
-//         setDateList(dateListTmp)
-//         break;
-//       case '年':
-//         start = date.getFullYear()
-//         end = now.getFullYear()
-//         for (let i = 0; i <= end - start; i++) {
-//           dateListTmp.push(start + i)
-//         }
-//         dateListTmp = dateListTmp.map(i => i + type)
-//         dateListTmp.splice(-1, 1, '今年')
-//         setDateList(dateListTmp)
-//         break;
-//       default:
-//         break;
-//     }
-
-//   }
-
-
-
-//   useEffect(() => {
-//     getData()
-//     getDateList(values[current])
-
-//   }, [])
-
-//   return (
-//     <View className='report'>
-
-//       <View className='overview' style={{ marginTop: height + 'px' }}>
-//         <View className='SegmentedControl'>
-//           <SegmentedControl values={values}
-//             onClick={handleClick}
-//             current={current}
-//           ></SegmentedControl>
-//         </View>
-//       </View>
-
-
-//       <View className='label clearfix'>
-//         <ScrollView scrollX style={{ overflow: 'hidden' }} class='fl'>
-//           <View className='date' >
-//             {
-//               dateList.map((i, index) => (
-//                 <View className={index === currentIndex ? 'item active' : 'item'}
-//                   key={i}
-//                   onClick={() => handleClickDate(index)}
-//                 >{ i }</View>
-//               ))
-//             }
-//           </View>
-//         </ScrollView>
-//         <View className='picker fl'>
-//           <Picker mode='selector' range={selector} onChange={onChange}>
-//             <View>
-//               { selectorChecked } <Text className='icon'></Text>
-//             </View>
-//           </Picker>
-//         </View>
-//       </View>
-
-//       <View>总支出:88.00</View>
-//       <View>平均值:14.22</View>
-//       <View className='echarts'>
-//         <LineChart ref={ chart}></LineChart>
-//       </View>
-
-//       <View className='detail'>
-//         <View className='title'>{ selectorChecked }排行榜</View>
-//         {
-//           detailList.map((item, index) => (<View className='item' key={item.type + index}>
-//             <View className='icon'>
-//               <IconComponent name={item.icon}></IconComponent>
-//             </View>
-//             <View className='warpper'>
-//               <View className='clearfix'>
-//                 <View className='fl'>{ item.type }</View>
-//                 <View className='fl' style={{ marginLeft: '30rpx' }}>20%</View>
-//                 <View className='fr'>{ item.count }</View>
-//               </View>
-//               <View className='bar'></View>
-//             </View>
-//           </View>))
-//         }
-
-//       </View>
-//     </View>
-//   )
-// }
-
-// const mapStateToProps = state => ({
-//   userInfo: state.userInfo,
-//   statusBarHeight: state.systemInfo.statusBarHeight,
-// })
-
-// const mapDispatchToProps = dispatch => ({})
-
-
-// export default connect(mapStateToProps, mapDispatchToProps)(ReportPage)
