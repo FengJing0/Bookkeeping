@@ -72,13 +72,7 @@ padding-bottom: 175px;
       display: flex;
       flex-direction: row;
       .icon{
-        width:64px;
-        height: 64px;
-        border-radius: 50%;
-        background-color: #f7f7f7;
-        text-align: center;
-        line-height: 64px;
-        color:$color-primary;
+        @extend %icon;
       }
       .warpper{
         flex:1;
@@ -89,7 +83,7 @@ padding-bottom: 175px;
           width: 100%;
           min-width: 10px;
           border-radius: 8px;
-          background: $color-inline-gradient;
+          background: $color-warning;
         }
       }
     }

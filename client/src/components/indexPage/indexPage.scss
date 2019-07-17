@@ -43,14 +43,8 @@ $border:1px solid #E6E6E6;
       color:#333;
       line-height: 64px;
       .icon{
-        background:#ffc64b;
-        border-radius: 50%;
-        width:64px;
-        height: 64px;
-        line-height: 64px;
-        margin-right: 20px;
-        text-align: center;
-        color:#fff;
+        @extend %icon;
+        margin-right:20px;
       }
     }
   }

@@ -11,14 +11,8 @@ $border:1px solid #e6e6e6;
     left:0;
     width:100%;
     .icon{
-        background:$color-inline-gradient;
-        border-radius: 50%;
-        width:64px;
-        height: 64px;
-        line-height: 64px;
+        @extend %icon;
         margin:20px auto;
-        text-align: center;
-        color:#fff;
       }
       .title{
         font-size: 36px;
