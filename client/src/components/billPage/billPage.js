@@ -1,15 +1,53 @@
-import Taro, { useState } from "@tarojs/taro"
+import Taro, { useState,useEffect } from "@tarojs/taro"
 import { View, Text, Picker } from "@tarojs/components"
 import { connect } from '@tarojs/redux'
 
-import { set as setUserInfoAction } from '../../actions/userInfo'
-
-
+import { getBillTotalData } from '../../api/index'
 import './billPage.scss'
 
 function BillPage (props) {
   const [detailList, setDetailList] = useState(getInitList())
   const [year, setYear] = useState(new Date().getFullYear())
+  const [total, setTotal] = useState({
+    pay: 0,
+    income: 0,
+    balance: 0
+  })
+
+  useEffect(() => {
+    getData(year)
+  }, [])
+
+  function getData (year) {
+    Taro.showLoading({
+      title: '加载中...',
+      mask:true
+    })
+    getBillTotalData({ year:+year }).then(res => {
+      console.log(res)
+      const balance = (res.income-res.pay).toFixed(2)
+      setTotal({
+        pay: parseFloat(res.pay.toFixed(2)),
+        income: parseFloat(res.income.toFixed(2)),
+        balance
+      })
+      const list = detailList.map(i => {
+        if (!res.data[i.month]) { 
+          i.pay = 0
+          i.income = 0
+          i.balance=0
+        } else {
+          const data = res.data[i.month] 
+          i.pay = parseFloat(data.pay.toFixed(2))
+          i.income = parseFloat(data.income.toFixed(2))
+          i.balance = parseFloat((data.income - data.pay).toFixed(2))
+        } 
+        return i
+      })
+      setDetailList(list)
+      Taro.hideLoading()
+    })
+  }
 
   function getInitList () {
     let arr = []
@@ -26,6 +64,7 @@ function BillPage (props) {
 
   function handleChange (e) {
     setYear(e.detail.value)
+    getData(e.detail.value)
   }
 
   return (
@@ -44,10 +83,10 @@ function BillPage (props) {
           </Picker>
 
         </View>
-        <View className='totalNo'>-123.32</View>
+        <View className='totalNo'>{ total.balance }</View>
         <View className='type'>
-          <View className='item'>收入:11.22</View>
-          <View className='item'>支出:11.22</View>
+          <View className='item'>收入:{ total.income }</View>
+          <View className='item'>支出:{ total.pay }</View>
         </View>
       </View>
       <View className='list'>
@@ -71,14 +110,9 @@ function BillPage (props) {
 }
 
 const mapStateToProps = state => ({
-  userInfo: state.userInfo,
   statusBarHeight: state.systemInfo.statusBarHeight,
 })
 
-const mapDispatchToProps = dispatch => ({
-  setUserInfo (data) {
-    dispatch(setUserInfoAction(data))
-  }
-})
+const mapDispatchToProps = dispatch => ({})
 
 export default connect(mapStateToProps, mapDispatchToProps)(BillPage)

@@ -30,8 +30,6 @@ export default class ReportPage extends Component {
     selector: ['支出', '收入'],
     selectorChecked: '支出', // 当前选中的type
     detailList: [],  // 底部列表数据
-    // chartData: [0, 0, 0, 0, 0, 0, 0],  // 图表的数据，y轴
-    // chartDateList: [], // 图表的x轴
     chartData: {},
     total: '0.00',
     average: '0.00'
@@ -97,6 +95,7 @@ export default class ReportPage extends Component {
           obj.percent = (count / res.total * 100).toFixed(2) + '%'
           detailList.push(obj)
         }
+        detailList.sort((a, b) => +b.count - +a.count)
         return {
           total,
           average,
@@ -104,8 +103,8 @@ export default class ReportPage extends Component {
           chartData
         }
       }, () => {
-          this.chart.refresh(this.setChartData())
-          Taro.hideLoading ()
+        this.chart.refresh(this.setChartData(), selectorChecked, values[current])
+          Taro.hideLoading()
       })
     })
   }
@@ -134,14 +133,14 @@ export default class ReportPage extends Component {
     this.setState((state) => {
       let chartData = state.chartData
       for (const key in chartData) {
-        chartData[key]=0
+        chartData[key] = 0
       }
       return {
         selectorChecked: this.state.selector[e.detail.value],
         chartData
       }
     }, () => {
-        this.getData()
+      this.getData()
     })
   }
 
@@ -242,12 +241,12 @@ export default class ReportPage extends Component {
     // this.getData()
     Taro.showLoading({
       title: '加载中...',
-      mask:true
+      mask: true
     })
     this.getDateList()
 
     setTimeout(() => {
-      this.chart.refresh(this.setChartData());
+      this.chart.refresh(this.setChartData(), this.state.selectorChecked, this.state.values[this.state.current]);
     }, 20);
   }
 
@@ -301,7 +300,7 @@ export default class ReportPage extends Component {
         <View className='detail'>
           <View className='title'>{ selectorChecked }排行榜</View>
           {
-            detailList.map((item, index) => (<View className='item' key={item.name + index}>
+            detailList.map(item => (<View className='item' key={item.name}>
               <View className='icon'>
                 <IconComponent name={item.icon}></IconComponent>
               </View>
@@ -311,7 +310,7 @@ export default class ReportPage extends Component {
                   <View className='fl' style={{ marginLeft: '30rpx' }}>{ item.percent }</View>
                   <View className='fr'>{ item.count }</View>
                 </View>
-                <View className='bar' style={ { width: item.percent}}></View>
+                <View className='bar' style={{ width: item.percent }}></View>
               </View>
             </View>))
           }

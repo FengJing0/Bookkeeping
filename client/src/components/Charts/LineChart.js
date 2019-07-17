@@ -1,7 +1,7 @@
 import Taro, { Component } from "@tarojs/taro";
 import * as echarts from "./ec-canvas/echarts";
 
-function setChartData (chart, data) {
+function setChartData (chart, data, type, dateType) {
   let option = {
     color: ['#999'],
     grid: {
@@ -21,9 +21,14 @@ function setChartData (chart, data) {
         }
       },
       formatter: function (params) {
+        const list = {
+          '周': '',
+          '月': '日',
+          '年': '月',
+        }
         // console.log(params)
         params = params[0];
-        return `${params.name}:${params.value}元`;
+        return `${params.name}${list[dateType]}:${type} ${params.value}元`;
       },
     },
     xAxis: [
@@ -52,12 +57,15 @@ function setChartData (chart, data) {
         ...item,
         type: 'line',
         itemStyle: {
-          color: '#FC7F5D'
+          color: '#FC7F5D',
+          borderColor: '#ccc',
+          borderWidth: 1
         },
         lineStyle: {
-          color: '#999',
+          color: '#ccc',
           width: 1
-        }
+        },
+        symbol: 'circle'
       }
     })
   }
@@ -81,19 +89,14 @@ export default class LineChart extends Component {
     }
   };
 
-  // componentWillReceiveProps (props) {
-  //   console.log(props)
-  //   this.refresh(props.chartData)
-  // }
 
-
-  refresh (data) {
+  refresh (data, type, dateType) {
     this.Chart.init((canvas, width, height) => {
       const chart = echarts.init(canvas, null, {
         width: width,
         height: height
       });
-      setChartData(chart, data);
+      setChartData(chart, data, type, dateType);
       return chart;
     });
   }

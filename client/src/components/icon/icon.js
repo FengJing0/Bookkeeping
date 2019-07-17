@@ -5,6 +5,6 @@ import './iconfont.css'
 
 
 export default function IconComponent (props) {
-  const { fontSize = 48, name } = props
+  const { fontSize = 48, name ='qita' } = props
   return <Text style={{ fontSize: fontSize + 'rpx' }} className={'iconfont icon-' + name}></Text>
 }

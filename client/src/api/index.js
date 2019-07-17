@@ -71,3 +71,12 @@ export const getChartData = (data) => {
     return isSuccess(res)
   })
 }
+
+export const getBillTotalData = (data) => {
+  return Taro.cloud.callFunction({
+    name: 'getBillTotalData',
+    data
+  }).then(res => {
+    return isSuccess(res)
+  })
+}
