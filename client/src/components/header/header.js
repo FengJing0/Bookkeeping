@@ -17,12 +17,12 @@ function Header (props) {
         <IconComponent name='fanhui1'></IconComponent>
       </View>
     }
-    <Text className='title'>{ title === '资产' ? '理财记' : title }</Text>
+    <Text className='title'>{ title === '资产' ? '钱迹账' : title }</Text>
   </View>)
 }
 
 Header.defaultProps = {
-  title: '理财记',
+  title: '钱迹账',
   height: 112,
   goBack: false
 }

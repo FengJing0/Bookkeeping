@@ -23,7 +23,7 @@ class CalculatorClass {
   }
 
   pushItem (i) {
-    if (this.result) { this.init() }
+    // if (this.result) { this.init() }
     if (this.show === '0') { this.show = '' }
     if (!isNaN(i)) {
       this.tmp += i
@@ -31,6 +31,12 @@ class CalculatorClass {
     }
     switch (i) {
       case '+':
+        if (this.result) {
+          this.tmp = this.result
+          console.log(this.tmp)
+          this.show=this.tmp
+          this.result = 0
+        }
         if (this.tmp) {
           this.isFunc()
           this.funcList.push('+')
@@ -38,6 +44,11 @@ class CalculatorClass {
         }
         break;
       case '-':
+        if (this.result) {
+          this.tmp = this.result
+          this.show = this.tmp
+          this.result = 0
+        }
         if (this.tmp) {
           this.isFunc()
           this.funcList.push('-')
@@ -75,6 +86,9 @@ class CalculatorClass {
     if (this.tmp.slice(-1) === '.') {
       this.tmp = this.tmp.slice(0, -1)
     }
+    if (!this.tmp) {
+      return
+    }
     this.numList.push(this.tmp)
     this.tmp = ''
 
@@ -82,6 +96,10 @@ class CalculatorClass {
 
   getResult () {
     this.isFunc()
+    if (this.result && !this.numList[0]) {
+      this.result = (+this.result).toFixed(2)
+      return
+    }
     let res = Number(this.numList[0])
     for (let i = 1, len = this.numList.length; i < len; i++) {
       let item = Number(this.numList[i])
@@ -128,9 +146,10 @@ export default class Calculator extends Component {
       this.setState({
         showStr: this.state.calculator.show
       })
-      if (val === 'C' && this.state.result) {
+      if (this.state.result && (val === 'C' || val === '-' || val === '+') ) {
         this.setState({
-          result: 0
+          result: 0,
+          showStr: this.state.calculator.show
         })
       }
       if (val === '=') {
@@ -160,16 +179,10 @@ export default class Calculator extends Component {
   }
 
   componentDidMount () {
-    // console.log(this.props.detailData)
     this.state.calculator.init()
   }
 
-  // componentDidShow () {
-  //   console.log(this.props.detailData)
-  // }
-
   componentWillReceiveProps (props) {
-    // console.log(props)
     if (props.detailData._id&&!this.state.id) {
       console.log(props.detailData)
       const data = props.detailData
