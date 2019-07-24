@@ -78,12 +78,13 @@ padding-bottom: 175px;
         flex:1;
         margin-left:12px;
         .bar{
+          $color:linear-gradient(125deg,#f8ce73,#f8b625);
           margin-top:10px;
           height: 16px;
           width: 100%;
           min-width: 10px;
           border-radius: 8px;
-          background: $color-warning;
+          background: $color;
         }
       }
     }

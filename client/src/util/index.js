@@ -1,10 +1,10 @@
 export const getWeek = date => {
   var d1 = new Date();
   var d2 = new Date(date);
-  d2.setMonth(0);
-  d2.setDate(1);
-  var s1 = Math.ceil((d1 - d2) / (24 * 60 * 60 * 1000));
-  return Math.ceil(s1 / 7);
+  d1.setMonth(0);
+  d1.setDate(1);
+  var s1 = Math.ceil((d2 - d1) / (24 * 60 * 60 * 1000));
+  return Math.ceil((s1 + d1.getDay())  / 7);
 }
 
 export const getWeekDate = week => {

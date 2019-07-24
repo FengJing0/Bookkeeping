@@ -170,6 +170,8 @@ export default class ReportPage extends Component {
         for (let i = 0; i <= end - start; i++) {
           dateListTmp.push(start + i)
         }
+        console.log(dateListTmp)
+        console.log(date, now)
         dateListTmp = dateListTmp.map(i => i + type)
         dateListTmp.splice(-1, 1, '本周')
         break;
