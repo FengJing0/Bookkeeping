@@ -1,5 +1,5 @@
 import Taro, { useState, useEffect } from "@tarojs/taro"
-import { View, Image } from "@tarojs/components"
+import { View, Image, Button } from "@tarojs/components"
 import { connect } from '@tarojs/redux'
 
 import { set as setUserInfoAction } from '../../actions/userInfo'
@@ -37,6 +37,7 @@ function MyPage (props) {
           </View>
         </View>
       </View>
+        <Button open-type='share' className='btn'>分享给您的朋友</Button>
     </View>
   )
 }

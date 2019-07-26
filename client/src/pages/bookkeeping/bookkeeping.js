@@ -36,7 +36,7 @@ export default class Bookkeeping extends Component {
     this.setState({
       current: val,
       list,
-      showCalculator:false
+      showCalculator: false
     })
   }
 
@@ -59,6 +59,17 @@ export default class Bookkeeping extends Component {
       selectedItem: '',
       showCalculator: false
     })
+  }
+
+  onShareAppMessage (res) {
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target)
+    }
+    return {
+      title: '3秒钟极速记账，让你清楚掌握钱的行踪',
+      imageUrl: '../../asstes/imgs/share.png'
+    }
   }
 
   hideCalculator = e => {
@@ -99,11 +110,11 @@ export default class Bookkeeping extends Component {
         this.setState({
           detailData: res.data,
           selectedItem: res.data.category,
-          showCalculator:true
+          showCalculator: true
         })
         // console.log(res.data)
       })
-      
+
     }
     this.init()
   }
@@ -139,7 +150,7 @@ export default class Bookkeeping extends Component {
             ))
           }
         </View>
-        <Calculator detailData={ detailData} show={showCalculator} onSubmit={data => this.handleSubmit(data)}></Calculator>
+        <Calculator detailData={detailData} show={showCalculator} onSubmit={data => this.handleSubmit(data)}></Calculator>
       </View>
     )
   }
