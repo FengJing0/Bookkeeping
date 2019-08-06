@@ -4,6 +4,7 @@ import { connect } from '@tarojs/redux'
 
 import IconComponent from '../icon/icon'
 import LoginBtn from '../loginBtn/loginBtn'
+import NotData from '../notData/notData'
 
 import './indexPage.scss'
 
@@ -30,7 +31,7 @@ export default class IndexPage extends Component {
 
 
   handleDateChange = e => {
-    const date = e.detail.value.split('-').map(i=>Number(i))
+    const date = e.detail.value.split('-').map(i => Number(i))
     this.setState({
       year: date[0],
       month: date[1]
@@ -92,7 +93,7 @@ export default class IndexPage extends Component {
 
     return (
       <View className='index'>
-        <View className='overview' style={ { marginTop: height + 'px' } }>
+        <View className='overview' style={{ marginTop: height + 'px' }}>
           <LoginBtn>
             <Picker mode='date' fields='month' onChange={this.handleDateChange}>
               <View className='item'>
@@ -110,35 +111,38 @@ export default class IndexPage extends Component {
             <Text>{ payList[0] }<Text className='label'>.{ payList[1] }</Text></Text>
           </View>
         </View>
-        {
-          list.map(item => (
-            <View className='detail' key={item.day}>
-              <View className='date'>
-                <View>{ month }月{ item.day }日</View>
-                <View style={{ flex: 1, marginLeft: '10rpx' }}>星期{ getDay(item.day) }</View>
-                { item.income && <View style={{ marginRight: '10rpx' }}>收入：{ item.income.toFixed(2) }</View> }
-                { item.pay && <View>支出：{ item.pay.toFixed(2) }</View> }
-              </View>
-              {
-                item.list.map(sub => (
-                  <View className='detailItem' key={sub._id} onClick={this.handleDetail} dataVal={sub._id}>
-                    <View className='clearfix'>
-                      <View className='fl icon'>
-                        <IconComponent name={sub.category.icon}></IconComponent>
+        <View className='detail'>
+          {
+            list.length > 0 ? list.map(item => (
+              <View key={item.day}>
+                <View className='date'>
+                  <View>{ month }月{ item.day }日</View>
+                  <View style={{ flex: 1, marginLeft: '10rpx' }}>星期{ getDay(item.day) }</View>
+                  { item.income && <View style={{ marginRight: '10rpx' }}>收入：{ item.income.toFixed(2) }</View> }
+                  { item.pay && <View>支出：{ item.pay.toFixed(2) }</View> }
+                </View>
+                {
+                  item.list.map(sub => (
+                    <View className='detailItem' key={sub._id} onClick={this.handleDetail} dataVal={sub._id}>
+                      <View className='clearfix'>
+                        <View className='fl icon'>
+                          <IconComponent name={sub.category.icon}></IconComponent>
+                        </View>
+                        <View className='fl'>{ sub.category.name }</View>
                       </View>
-                      <View className='fl'>{ sub.category.name }</View>
+                      <View>
+                        <Text>{ sub.type === '支出' ? '-' : null }{ sub.count }</Text>
+                      </View>
                     </View>
-                    <View>
-                      <Text>{ sub.type === '支出' ? '-' : null }{ sub.count }</Text>
-                    </View>
-                  </View>
-                ))
-              }
+                  ))
+                }
 
-            </View>
-          ))
-        }
-
+              </View>
+            ))
+              :
+              (<NotData></NotData>)
+          }
+        </View>
       </View>
     )
   }

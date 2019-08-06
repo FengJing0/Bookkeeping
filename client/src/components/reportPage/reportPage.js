@@ -4,7 +4,8 @@ import { connect } from '@tarojs/redux'
 
 import SegmentedControl from '../SegmentedControl/SegmentedControl'
 import IconComponent from '../icon/icon'
-import LineChart from "../Charts/LineChart";
+import NotData from '../notData/notData'
+import LineChart from "../Charts/LineChart"
 
 import './reportPage.scss'
 
@@ -104,7 +105,7 @@ export default class ReportPage extends Component {
         }
       }, () => {
         this.chart.refresh(this.setChartData(), selectorChecked, values[current])
-          Taro.hideLoading()
+        Taro.hideLoading()
       })
     })
   }
@@ -163,15 +164,13 @@ export default class ReportPage extends Component {
     let dateListTmp = []
     switch (type) {
       case '周':
-        // start = 20
-        // end = 28
-        start = getWeek(date)
-        end = getWeek(now)
+        start = 20
+        end = 28
+        // start = getWeek(date)
+        // end = getWeek(now)
         for (let i = 0; i <= end - start; i++) {
           dateListTmp.push(start + i)
         }
-        console.log(dateListTmp)
-        console.log(date, now)
         dateListTmp = dateListTmp.map(i => i + type)
         dateListTmp.splice(-1, 1, '本周')
         break;
@@ -199,7 +198,8 @@ export default class ReportPage extends Component {
         break;
     }
     this.setState({
-      dateList: dateListTmp
+      dateList: dateListTmp,
+      currentIndex: dateListTmp.length - 1
     }, () => {
       this.getChartDateList()
     })
@@ -240,7 +240,6 @@ export default class ReportPage extends Component {
   }
 
   componentDidMount () {
-    // this.getData()
     Taro.showLoading({
       title: '加载中...',
       mask: true
@@ -270,20 +269,21 @@ export default class ReportPage extends Component {
         </View>
 
 
-        <View className='label clearfix'>
-          <ScrollView scrollX style={{ overflow: 'hidden' }} class='fl'>
+        <View className='label'>
+          <ScrollView scrollX scroll-into-view={ `date-${currentIndex}` }
+            scroll-with-animation class='scrollView'>
             <View className='date' >
-              {
-                dateList.map((i, index) => (
-                  <View className={index === currentIndex ? 'item active' : 'item'}
-                    key={i}
-                    onClick={() => this.handleClickDate(index)}
-                  >{ i }</View>
-                ))
-              }
+            {
+              dateList.map((i, index) => (
+                <View id={`date-${index}`} className={index === currentIndex ? 'item active' : 'item'}
+                  key={i}
+                  onClick={() => this.handleClickDate(index)}
+                >{ i }</View>
+              ))
+            }
             </View>
           </ScrollView>
-          <View className='picker fl'>
+          <View className='picker'>
             <Picker mode='selector' range={this.selector} onChange={this.onChange}>
               <View>
                 { selectorChecked } <Text className='icon'></Text>
@@ -302,7 +302,8 @@ export default class ReportPage extends Component {
         <View className='detail'>
           <View className='title'>{ selectorChecked }排行榜</View>
           {
-            detailList.map(item => (<View className='item' key={item.name}>
+            detailList.length > 0 ?
+              detailList.map(item => (<View className='item' key={ item.name }>
               <View className='icon'>
                 <IconComponent name={item.icon}></IconComponent>
               </View>
@@ -314,7 +315,8 @@ export default class ReportPage extends Component {
                 </View>
                 <View className='bar' style={{ width: item.percent }}></View>
               </View>
-            </View>))
+              </View>))
+              : (<NotData></NotData>)
           }
 
         </View>
